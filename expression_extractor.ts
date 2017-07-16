@@ -1,7 +1,20 @@
 const ONE_WAY_BINDING_REGEX = /\[\[(.*?)\]\]/;
 const TWO_WAY_BINDING_REGEX = /\{\{(.*?)\}\}/;
+import { AliasMap } from "./types";
 
-export function extractExpression(str: string) {
+function unAliasExpressions(expressions: string[], aliasMap: AliasMap) {
+  return expressions.map(expression => {
+    const leftExpression = expression.split(".")[0];
+
+    if (aliasMap[leftExpression] !== undefined) {
+      expression = expression.replace(leftExpression, aliasMap[leftExpression]);
+    }
+
+    return expression;
+  });
+}
+
+export function extractExpression(str: string, aliasMap: AliasMap) {
   const ret: string[] = [];
   let startingIndex = 0;
 
@@ -47,5 +60,9 @@ export function extractExpression(str: string) {
     break;
   }
 
-  return ret;
+  if (Object.keys(aliasMap).length > 0) {
+    return unAliasExpressions(ret, aliasMap);
+  } else {
+    return ret;
+  }
 }

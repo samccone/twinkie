@@ -1,12 +1,25 @@
 <dom-module id="simple">
   <template>
-    <div>something</div>
+    <div blank="attr">something</div>
     <p>[[one]]</p>
     <p>[[two]]</p>
     <div>
-    some {{three}}
+      some {{three}}
     </div>
     <div attr="[[four]]"></div>
-    <div arrt="{{five()}}"></div>
+    <div arrt="{{five()}}--[[six]]"></div>
+    <template is="dom-repeat" items="[[seven]]">
+      <p>[[item]]</p>
+    </template>
+    <b>[[eight]]</b>
+    <h1>[[nine(ten)]]</h1>
+    <template is="dom-repeat" items="[[eleven]]" as="number">
+      <p>[[number.twelve]]</p>
+    </template>
+    <template is="dom-repeat" items="[[thirteen(fourteen)]]">
+    </template>
+    <div>
+      [[fifteen(sixteen, seventeen(eighteen))]] wow so nested
+    </div>
   </template>
 </dom-module>
