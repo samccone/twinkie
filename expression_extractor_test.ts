@@ -1,5 +1,27 @@
 import { expect } from "chai";
-import { extractExpression } from "./expression_extractor";
+import {
+  extractExpression,
+  removePrimitiveExpressions
+} from "./expression_extractor";
+
+describe("strips primitives", () => {
+  it("handles numbers", () => {
+    expect(removePrimitiveExpressions(["1"])).to.deep.equal([]);
+    expect(removePrimitiveExpressions(["12a"])).to.deep.equal(["12a"]);
+  });
+
+  it("handles strings", () => {
+    expect(removePrimitiveExpressions(['"1"'])).to.deep.equal([]);
+    expect(removePrimitiveExpressions(["'1'"])).to.deep.equal([]);
+    expect(removePrimitiveExpressions(['"ok"1'])).to.deep.equal(['"ok"1']);
+    expect(removePrimitiveExpressions(["'ok'1"])).to.deep.equal(["'ok'1"]);
+  });
+
+  it("handles booleans", () => {
+    expect(extractExpression("false", {})).to.deep.equal([]);
+    expect(extractExpression("true", {})).to.deep.equal([]);
+  });
+});
 
 describe("extracting expressions", () => {
   it("handles an empty string", () => {

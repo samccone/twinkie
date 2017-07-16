@@ -1,5 +1,9 @@
 const ONE_WAY_BINDING_REGEX = /\[\[(.*?)\]\]/;
 const TWO_WAY_BINDING_REGEX = /\{\{(.*?)\}\}/;
+const IS_NUMBER_PRIMITIVE_REGEX = /^\d+$/;
+const IS_STRING_PRIMITIVE_REGEX = /^".*"$|^'.*'$/;
+const IS_BOOL_PRMITIVE_REGEX = /^true$|^false$/;
+
 import { AliasMap } from "./types";
 
 function unAliasExpressions(expressions: string[], aliasMap: AliasMap) {
@@ -14,8 +18,18 @@ function unAliasExpressions(expressions: string[], aliasMap: AliasMap) {
   });
 }
 
+export function removePrimitiveExpressions(expressions: string[]) {
+  return expressions.filter(expression => {
+    return (
+      !expression.match(IS_NUMBER_PRIMITIVE_REGEX) &&
+      !expression.match(IS_STRING_PRIMITIVE_REGEX) &&
+      !expression.match(IS_BOOL_PRMITIVE_REGEX)
+    );
+  });
+}
+
 export function extractExpression(str: string, aliasMap: AliasMap) {
-  const ret: string[] = [];
+  let ret: string[] = [];
   let startingIndex = 0;
 
   if (str.length === 0) {
@@ -61,8 +75,8 @@ export function extractExpression(str: string, aliasMap: AliasMap) {
   }
 
   if (Object.keys(aliasMap).length > 0) {
-    return unAliasExpressions(ret, aliasMap);
-  } else {
-    return ret;
+    ret = unAliasExpressions(ret, aliasMap);
   }
+
+  return ret;
 }

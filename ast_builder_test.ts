@@ -45,6 +45,57 @@ describe("extracting an expression", () => {
     ]);
   });
 
+  it("can extract a function with primitive number arguments", () => {
+    const node = Cheerio.parseHTML(`[[hey(1, b)]]`)[0];
+
+    expect(getExpressionsForNode(node, {})).to.deep.equal([
+      {
+        expression: "hey",
+        type: EXPRESSION.FUNCTION,
+        returnType: EXPRESSION.VALUE,
+        argumentCount: 2
+      },
+      {
+        expression: "b",
+        type: EXPRESSION.VALUE
+      }
+    ]);
+  });
+
+  it("can extract a function with primitive string arguments", () => {
+    const node = Cheerio.parseHTML(`[[hey("wow", 'zap', b)]]`)[0];
+
+    expect(getExpressionsForNode(node, {})).to.deep.equal([
+      {
+        expression: "hey",
+        type: EXPRESSION.FUNCTION,
+        returnType: EXPRESSION.VALUE,
+        argumentCount: 3
+      },
+      {
+        expression: "b",
+        type: EXPRESSION.VALUE
+      }
+    ]);
+  });
+
+  it("can extract a function with primitive bool arguments", () => {
+    const node = Cheerio.parseHTML(`[[hey(b, false, true)]]`)[0];
+
+    expect(getExpressionsForNode(node, {})).to.deep.equal([
+      {
+        expression: "hey",
+        type: EXPRESSION.FUNCTION,
+        returnType: EXPRESSION.VALUE,
+        argumentCount: 3
+      },
+      {
+        expression: "b",
+        type: EXPRESSION.VALUE
+      }
+    ]);
+  });
+
   it("can extract a function with arguments", () => {
     const node = Cheerio.parseHTML(`[[hey(a, b)]]`)[0];
 

@@ -1,5 +1,8 @@
 import { extractNodeAttributes, extractNodeContents } from "./dom_walker";
-import { extractExpression } from "./expression_extractor";
+import {
+  extractExpression,
+  removePrimitiveExpressions
+} from "./expression_extractor";
 import { AliasMap, AST_NODE, EXPRESSION } from "./types";
 import {
   isExpressionFunction,
@@ -33,7 +36,9 @@ function expressionToAstNodes(
       });
     }
 
-    for (const argumentExpression of getFunctionArguments(expression)) {
+    for (const argumentExpression of removePrimitiveExpressions(
+      functionArguments
+    )) {
       expressions.push(...expressionToAstNodes(argumentExpression));
     }
   } else {
