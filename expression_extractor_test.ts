@@ -23,6 +23,16 @@ describe("strips primitives", () => {
   });
 });
 
+describe("strips negation prefixes", () => {
+  it("handles strings", () => {
+    expect(extractExpression("[[!a]]", {})).to.deep.equal(["a"]);
+  });
+
+  it("handles functions", () => {
+    expect(extractExpression("[[!b()]]", {})).to.deep.equal(["b()"]);
+  });
+});
+
 describe("extracting expressions", () => {
   it("handles an empty string", () => {
     expect(extractExpression("", {})).to.deep.equal([]);

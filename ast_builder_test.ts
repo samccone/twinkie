@@ -45,6 +45,31 @@ describe("extracting an expression", () => {
     ]);
   });
 
+  it("can extract a function with negated arguments", () => {
+    const node = Cheerio.parseHTML(`[[!hey(!a, 1, !b, c)]]`)[0];
+
+    expect(getExpressionsForNode(node, {})).to.deep.equal([
+      {
+        expression: "hey",
+        type: EXPRESSION.FUNCTION,
+        returnType: EXPRESSION.VALUE,
+        argumentCount: 4
+      },
+      {
+        expression: "a",
+        type: EXPRESSION.VALUE
+      },
+      {
+        expression: "b",
+        type: EXPRESSION.VALUE
+      },
+      {
+        expression: "c",
+        type: EXPRESSION.VALUE
+      }
+    ]);
+  });
+
   it("can extract a function with primitive number arguments", () => {
     const node = Cheerio.parseHTML(`[[hey(1, b)]]`)[0];
 

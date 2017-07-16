@@ -28,6 +28,16 @@ export function removePrimitiveExpressions(expressions: string[]) {
   });
 }
 
+export function stripNegationPrefixes(expressions: string[]) {
+  return expressions.map(v => {
+    if (v.startsWith("!")) {
+      return v.slice(1);
+    }
+
+    return v;
+  });
+}
+
 export function extractExpression(str: string, aliasMap: AliasMap) {
   let ret: string[] = [];
   let startingIndex = 0;
@@ -73,6 +83,8 @@ export function extractExpression(str: string, aliasMap: AliasMap) {
     // no more matches time to bail.
     break;
   }
+
+  ret = stripNegationPrefixes(ret);
 
   if (Object.keys(aliasMap).length > 0) {
     ret = unAliasExpressions(ret, aliasMap);
