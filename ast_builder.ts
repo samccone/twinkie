@@ -19,34 +19,122 @@ function expressionsToAstNodes(expressions: string[]) {
   }, []);
 }
 
+/**
+ * 
+ * turns a.b(c.z).g
+ * into
+ * [a, b(c.z), g]
+ */
+export function splitExpressionOnOuterPeriods(expression: string) {
+  let accum = "";
+  const ret: string[] = [];
+  let parenLevel = 0;
+
+  for (const char of expression.split("")) {
+    if (char === "(") {
+      parenLevel++;
+    }
+
+    if (char === ")") {
+      parenLevel--;
+    }
+
+    if (char === "." && parenLevel === 0) {
+      if (accum.length) {
+        ret.push(accum);
+        accum = "";
+      }
+    } else {
+      accum += char;
+    }
+  }
+
+  if (parenLevel !== 0) {
+    throw new Error(`Unbalenced parens detected in expression ${expression}`);
+  }
+
+  if (accum.length) {
+    ret.push(accum);
+  }
+
+  return ret;
+}
+
+export function functionExpressionToAstNodes(
+  expression: string,
+  knownType: EXPRESSION = EXPRESSION.VALUE
+) {
+  const expressions = [];
+  const functionName = getFunctionName(expression);
+  const functionArguments = getFunctionArguments(expression);
+
+  if (functionName != null) {
+    expressions.push({
+      expression: functionName,
+      type: EXPRESSION.FUNCTION,
+      argumentCount: functionArguments.length,
+      returnType: knownType
+    });
+  }
+
+  for (const argumentExpression of stripNegationPrefixes(
+    removePrimitiveExpressions(functionArguments)
+  )) {
+    expressions.push(...expressionToAstNodes(argumentExpression));
+  }
+
+  return expressions;
+}
+
+function dotExpressionToNestedExpression(
+  expression: string,
+  knownType: EXPRESSION = EXPRESSION.VALUE
+) {
+  const additionalNodes: AST_NODE[] = [];
+  const rootExpressionString = splitExpressionOnOuterPeriods(expression)[0];
+  const rootExpressions = expressionToAstNodes(rootExpressionString);
+  additionalNodes.push(...rootExpressions.slice(1));
+
+  const root = rootExpressions[0];
+  root.children = {};
+
+  const tailExpression = splitExpressionOnOuterPeriods(expression)
+    .slice(1)
+    .reduce((prev, curr) => {
+      const currentExpressions = expressionToAstNodes(curr);
+      prev.children![currentExpressions[0].expression] = Object.assign(
+        { children: {} },
+        currentExpressions[0]
+      );
+      additionalNodes.push(...currentExpressions.slice(1));
+
+      return prev.children![currentExpressions[0].expression];
+    }, root);
+
+  tailExpression.type = knownType;
+
+  return [root, ...additionalNodes];
+}
+
 function expressionToAstNodes(
   expression: string,
   knownType: EXPRESSION = EXPRESSION.VALUE
 ) {
   const expressions: AST_NODE[] = [];
-  if (isExpressionFunction(expression)) {
-    const functionName = getFunctionName(expression);
-    const functionArguments = getFunctionArguments(expression);
 
-    if (functionName != null) {
+  if (isExpressionFunction(expression)) {
+    expressions.push(...functionExpressionToAstNodes(expression, knownType));
+  } else {
+    if (expression.indexOf(".") !== -1) {
+      expressions.push(
+        ...dotExpressionToNestedExpression(expression, knownType)
+      );
+    } else {
       expressions.push({
-        expression: functionName,
-        type: EXPRESSION.FUNCTION,
-        argumentCount: functionArguments.length,
-        returnType: knownType
+        expression,
+        type: knownType
       });
     }
-
-    for (const argumentExpression of stripNegationPrefixes(
-      removePrimitiveExpressions(functionArguments)
-    )) {
-      expressions.push(...expressionToAstNodes(argumentExpression));
-    }
-  } else {
-    expressions.push({
-      expression,
-      type: knownType
-    });
   }
 
   return expressions;

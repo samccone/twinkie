@@ -1,3 +1,3 @@
 // printer
-// handle .* expressions and . expressions
+// handle .* expressions
 // handle escaped strings
