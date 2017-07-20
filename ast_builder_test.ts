@@ -147,6 +147,25 @@ describe("extracting an expression", () => {
 });
 
 describe("extracting an expression", () => {
+  it("can extract a nested function with no arguments", () => {
+    const node = Cheerio.parseHTML(`[[a.hey()]]`)[0];
+
+    expect(getExpressionsForNode(node, {})).to.deep.equal([
+      {
+        expression: "a",
+        type: EXPRESSION.VALUE,
+        children: {
+          hey: {
+            expression: "hey",
+            type: EXPRESSION.FUNCTION,
+            returnType: EXPRESSION.VALUE,
+            argumentCount: 0,
+            children: {}
+          }
+        }
+      }
+    ]);
+  });
   it("can extract a function with no arguments", () => {
     const node = Cheerio.parseHTML(`[[hey()]]`)[0];
 

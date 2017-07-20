@@ -70,12 +70,21 @@ export function functionExpressionToAstNodes(
   const functionArguments = getFunctionArguments(expression);
 
   if (functionName != null) {
-    expressions.push({
-      expression: functionName,
-      type: EXPRESSION.FUNCTION,
-      argumentCount: functionArguments.length,
-      returnType: knownType
-    });
+    if (functionName.indexOf(".") !== -1) {
+      expressions.push(
+        ...dotExpressionToNestedExpression(functionName, EXPRESSION.FUNCTION, {
+          argumentCount: functionArguments.length,
+          returnType: knownType
+        })
+      );
+    } else {
+      expressions.push({
+        expression: functionName,
+        type: EXPRESSION.FUNCTION,
+        argumentCount: functionArguments.length,
+        returnType: knownType
+      });
+    }
   }
 
   for (const argumentExpression of stripNegationPrefixes(
@@ -89,7 +98,8 @@ export function functionExpressionToAstNodes(
 
 function dotExpressionToNestedExpression(
   expression: string,
-  knownType: EXPRESSION = EXPRESSION.VALUE
+  knownType: EXPRESSION = EXPRESSION.VALUE,
+  opts?: { argumentCount?: number; returnType?: EXPRESSION }
 ) {
   const additionalNodes: AST_NODE[] = [];
   const rootExpressionString = splitExpressionOnOuterPeriods(expression)[0];
@@ -113,6 +123,14 @@ function dotExpressionToNestedExpression(
     }, root);
 
   tailExpression.type = knownType;
+
+  if (opts && opts.argumentCount !== undefined) {
+    tailExpression.argumentCount = opts.argumentCount;
+  }
+
+  if (opts && opts.returnType !== undefined) {
+    tailExpression.returnType = opts.returnType;
+  }
 
   return [root, ...additionalNodes];
 }
