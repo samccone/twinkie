@@ -1,8 +1,15 @@
 import { expect } from "chai";
 import {
   extractExpression,
-  removePrimitiveExpressions
+  removePrimitiveExpressions,
+  removeObserverPostfixes
 } from "./expression_extractor";
+
+describe("strips observer paths", () => {
+  it("handles stripping observers", () => {
+    expect(removeObserverPostfixes(["a.*"])).to.deep.equal(["a"]);
+  });
+});
 
 describe("strips primitives", () => {
   it("handles numbers", () => {

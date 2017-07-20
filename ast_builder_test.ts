@@ -18,6 +18,16 @@ describe("extracting an expression", () => {
     ]);
   });
 
+  it("splits expressions when multiple nesting levels and observers are in place", () => {
+    it("splits expressions when multiple nesting levels are in place", () => {
+      expect(splitExpressionOnOuterPeriods("a.b(z(12), t.*).c.*")).to.deep.eq([
+        "a",
+        "b(z(12), t.*)",
+        "c"
+      ]);
+    });
+  });
+
   it("splits expressions when multiple nesting levels are in place", () => {
     expect(splitExpressionOnOuterPeriods("a.b(z(12), t).c")).to.deep.eq([
       "a",
@@ -239,6 +249,40 @@ describe("extracting an expression", () => {
       {
         expression: "a",
         type: EXPRESSION.VALUE
+      },
+      {
+        expression: "b",
+        type: EXPRESSION.VALUE
+      }
+    ]);
+  });
+
+  it("can extract a function with nested functions with observers", () => {
+    const node = Cheerio.parseHTML(`[[hey(a(k.c.*), b.*)]]`)[0];
+
+    expect(getExpressionsForNode(node, {})).to.deep.equal([
+      {
+        expression: "hey",
+        type: EXPRESSION.FUNCTION,
+        returnType: EXPRESSION.VALUE,
+        argumentCount: 2
+      },
+      {
+        expression: "a",
+        type: EXPRESSION.FUNCTION,
+        argumentCount: 1,
+        returnType: EXPRESSION.VALUE
+      },
+      {
+        expression: "k",
+        type: EXPRESSION.VALUE,
+        children: {
+          c: {
+            expression: "c",
+            type: EXPRESSION.VALUE,
+            children: {}
+          }
+        }
       },
       {
         expression: "b",

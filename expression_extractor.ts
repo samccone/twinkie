@@ -1,6 +1,7 @@
 const ONE_WAY_BINDING_REGEX = /\[\[(.*?)\]\]/;
 const TWO_WAY_BINDING_REGEX = /\{\{(.*?)\}\}/;
 const IS_NUMBER_PRIMITIVE_REGEX = /^\d+$/;
+const HAS_POSTFIX_OBSERVER_REGEX = /^.*\.\*$/;
 const IS_STRING_PRIMITIVE_REGEX = /^".*"$|^'.*'$/;
 const IS_BOOL_PRMITIVE_REGEX = /^true$|^false$/;
 
@@ -15,6 +16,16 @@ function unAliasExpressions(expressions: string[], aliasMap: AliasMap) {
     }
 
     return expression;
+  });
+}
+
+export function removeObserverPostfixes(expressions: string[]) {
+  return expressions.map(v => {
+    if (v.match(HAS_POSTFIX_OBSERVER_REGEX)) {
+      return v.slice(0, -2);
+    }
+
+    return v;
   });
 }
 
@@ -84,7 +95,7 @@ export function extractExpression(str: string, aliasMap: AliasMap) {
     break;
   }
 
-  ret = stripNegationPrefixes(ret);
+  ret = removeObserverPostfixes(stripNegationPrefixes(ret));
 
   if (Object.keys(aliasMap).length > 0) {
     ret = unAliasExpressions(ret, aliasMap);
