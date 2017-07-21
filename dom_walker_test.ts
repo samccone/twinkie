@@ -24,6 +24,18 @@ describe("walking attrs", () => {
 });
 
 describe("extracting contents", () => {
+  it("skips comment nodes", () => {
+    const parsed = Cheerio.parseHTML("<div><!-- <p>[[a]]</p> --></div>");
+    expect(
+      parsed
+        .reduce((accum, node) => {
+          accum.push(extractNodeContents(node));
+          return accum;
+        }, [])
+        .filter((v: null | string) => v != null)
+    ).to.deep.equal([]);
+  });
+
   it("handle when a node has no content", () => {
     const node = Cheerio.parseHTML("<div></div>")[0];
     expect(extractNodeContents(node)).to.eq(null);

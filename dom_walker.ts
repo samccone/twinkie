@@ -15,7 +15,7 @@ export function extractNodeAttributes(node: CheerioElement) {
 }
 
 export function extractNodeContents(node: CheerioElement) {
-  if (node.nodeValue != null) {
+  if (node.type !== "comment" && node.nodeValue != null) {
     return node.nodeValue;
   }
 
