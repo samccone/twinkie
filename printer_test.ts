@@ -30,10 +30,10 @@ describe("printing", () => {
         `)
       )
     ).to.deep.equal(`export interface View {
-  a: any;
-  b: (arg0: any, arg1: any) => any;
-  c: any;
-  d: any;
+a: any;
+b: (arg0: any, arg1: any) => any;
+c: any;
+d: any;
 };`);
   });
 
@@ -42,11 +42,24 @@ describe("printing", () => {
       printTree(
         astTreeFromString(`
             <div>[[a]]</div>
+            <div>[[a.d]]</div>
             <div>[[a.b.c]]</div>
         `)
       )
     ).to.deep.equal(`export interface View {
-  a: {b: {c: any;};};
+a: {d: any; b: {c: any;};};
+};`);
+  });
+
+  it("handles function with nested props", () => {
+    expect(
+      printTree(
+        astTreeFromString(`
+            <div>[[a().z]]</div>
+        `)
+      )
+    ).to.deep.equal(`export interface View {
+a: () => {z: any;};
 };`);
   });
 
@@ -59,7 +72,7 @@ describe("printing", () => {
         `)
       )
     ).to.deep.equal(`export interface View {
-  foo: () => any[];
+foo: () => any[];
 };`);
   });
 
@@ -73,7 +86,7 @@ describe("printing", () => {
         `)
       )
     ).to.deep.equal(`export interface View {
-  foo: {zap: any;}[];
+foo: {zap: any;}[];
 };`);
   });
 });

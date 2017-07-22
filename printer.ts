@@ -7,12 +7,24 @@ export function printTree(tree: AST_TREE) {
 
   for (const expression of Object.values<AST_NODE>(tree)) {
     expression.expression;
-    ret += `  ${expression.expression}: ${printExpressionType(expression)};\n`;
+    ret += `${expression.expression}: ${printExpressionType(expression)};\n`;
   }
 
   ret += "};";
 
   return ret;
+}
+
+function printChildrenType(children: AST_TREE): string {
+  return (
+    "{" +
+    Object.values(children)
+      .map(childNode => {
+        return `${childNode.expression}: ${printExpressionType(childNode)};`;
+      })
+      .join(" ") +
+    "}"
+  );
 }
 
 function expressionToString(expression: EXPRESSION = EXPRESSION.VALUE) {
@@ -37,13 +49,17 @@ function argumentCountToArgs(count: number) {
 
 function printExpressionType(node: AST_NODE) {
   if (node.type === EXPRESSION.VALUE) {
-    return "any";
+    return node.children !== undefined && Object.keys(node.children).length > 0
+      ? printChildrenType(node.children)
+      : "any";
   }
 
   if (node.type === EXPRESSION.FUNCTION) {
     return `(${argumentCountToArgs(
       node.argumentCount || 0
-    )}) => ${expressionToString(node.returnType)}`;
+    )}) => ${node.children !== undefined && Object.keys(node.children).length
+      ? printChildrenType(node.children)
+      : expressionToString(node.returnType)}`;
   }
 
   if (node.type === EXPRESSION.LIST) {
