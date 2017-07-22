@@ -385,6 +385,21 @@ describe("dom-repeat", () => {
     ]);
   });
 
+  it("handles a dom-repeat as function", () => {
+    const node = Cheerio.parseHTML(
+      `<template is="dom-repeat" items="[[wow()]]"></template>`
+    )[0];
+
+    expect(getExpressionsForNode(node, {})).to.deep.equal([
+      {
+        expression: "wow",
+        type: EXPRESSION.FUNCTION,
+        returnType: EXPRESSION.LIST,
+        argumentCount: 0
+      }
+    ]);
+  });
+
   it("complains when a dom-repeat has multiple item bindings", () => {
     const node = Cheerio.parseHTML(
       `<template is="dom-repeat" items="[[wow]] [[zap]]"></template>`

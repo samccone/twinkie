@@ -15,6 +15,17 @@ export function printTree(tree: AST_TREE) {
   return ret;
 }
 
+function expressionToString(expression: EXPRESSION = EXPRESSION.VALUE) {
+  switch (expression) {
+    case EXPRESSION.LIST:
+      return "any[]";
+    case EXPRESSION.VALUE:
+      return "any";
+    case EXPRESSION.FUNCTION:
+      return "() => any";
+  }
+}
+
 function argumentCountToArgs(count: number) {
   return new Array(count)
     .fill("")
@@ -30,7 +41,9 @@ function printExpressionType(node: AST_NODE) {
   }
 
   if (node.type === EXPRESSION.FUNCTION) {
-    return `(${argumentCountToArgs(node.argumentCount || 0)}) => any`;
+    return `(${argumentCountToArgs(
+      node.argumentCount || 0
+    )}) => ${expressionToString(node.returnType)}`;
   }
 
   if (node.type === EXPRESSION.LIST) {

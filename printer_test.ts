@@ -36,4 +36,44 @@ describe("printing", () => {
   d: any;
 };`);
   });
+
+  it("handles nested case", () => {
+    expect(
+      printTree(
+        astTreeFromString(`
+            <div>[[a]]</div>
+            <div>[[a.b.c]]</div>
+        `)
+      )
+    ).to.deep.equal(`export interface View {
+  a: {b: {c: any;};};
+};`);
+  });
+
+  it("handles dom-repeat as function", () => {
+    expect(
+      printTree(
+        astTreeFromString(`
+          <template is="dom-repeat" items="[[foo()]]">
+          </template>
+        `)
+      )
+    ).to.deep.equal(`export interface View {
+  foo: () => any[];
+};`);
+  });
+
+  it("handles a dom-repeat case", () => {
+    expect(
+      printTree(
+        astTreeFromString(`
+        <template is="dom-repeat" items="[[foo]]">
+            <div>[[item.zap]]</div>
+        </template>
+        `)
+      )
+    ).to.deep.equal(`export interface View {
+  foo: {zap: any;}[];
+};`);
+  });
 });
