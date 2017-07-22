@@ -4,6 +4,8 @@ import * as Cheerio from "cheerio";
 import { walkNodes } from "./dom_walker";
 import { AliasMap, AST_NODE } from "./types";
 import { getExpressionsForNode } from "./ast_builder";
+import { nodesToTree } from "./ast_tree_builder";
+import { printTree } from "./printer";
 
 const nodes: AST_NODE[] = [];
 
@@ -20,4 +22,4 @@ parsed.forEach(node => {
   });
 });
 
-console.log(nodes);
+console.log(printTree(nodesToTree(nodes)));

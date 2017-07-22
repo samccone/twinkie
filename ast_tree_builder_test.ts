@@ -2,7 +2,7 @@ import { expect } from "chai";
 import { nodesToTree } from "./ast_tree_builder";
 import { walkNodes } from "./dom_walker";
 import * as Cheerio from "cheerio";
-import { AliasMap, AST_NODE } from "./types";
+import { AliasMap, AST_NODE, EXPRESSION } from "./types";
 import { getExpressionsForNode } from "./ast_builder";
 
 describe("ast tree building", () => {
@@ -28,16 +28,16 @@ describe("ast tree building", () => {
     expect(nodesToTree(nodes)).to.deep.eq({
       a: {
         expression: "a",
-        type: "value"
+        type: EXPRESSION.VALUE
       },
       b: {
         expression: "b",
-        type: "value",
+        type: EXPRESSION.VALUE,
         children: {
           z: {
             children: {},
             expression: "z",
-            type: "value"
+            type: EXPRESSION.VALUE
           },
           a: {
             children: {
@@ -46,23 +46,23 @@ describe("ast tree building", () => {
                   t: {
                     children: {},
                     expression: "t",
-                    type: "value"
+                    type: EXPRESSION.VALUE
                   }
                 },
                 expression: "c",
-                type: "function",
+                type: EXPRESSION.FUNCTION,
                 argumentCount: 2,
-                returnType: "value"
+                returnType: EXPRESSION.VALUE
               }
             },
             expression: "a",
-            type: "value"
+            type: EXPRESSION.VALUE
           }
         }
       },
       z: {
         expression: "z",
-        type: "value"
+        type: EXPRESSION.VALUE
       }
     });
   });
