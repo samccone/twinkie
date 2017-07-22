@@ -1,3 +1,3 @@
 // handle escaped strings
 // when flattening do not lose types
-// handle [] child types when printing
+// handle nested dom-repeat printing

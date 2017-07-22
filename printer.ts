@@ -15,13 +15,18 @@ export function printTree(tree: AST_TREE) {
   return ret;
 }
 
-function printChildrenType(children: AST_TREE): string {
+function printChildrenType(
+  children: AST_TREE,
+  ...indexTypes: string[]
+): string {
   return (
     "{" +
     Object.values(children)
       .map(childNode => {
         return `${childNode.expression}: ${printExpressionType(childNode)};`;
       })
+      .concat(indexTypes)
+      .filter(v => v.length)
       .join(" ") +
     "}"
   );
@@ -47,10 +52,21 @@ function argumentCountToArgs(count: number) {
     .join(", ");
 }
 
+function printListIndexType(node: AST_NODE) {
+  if (
+    node.listIndexType !== undefined &&
+    Object.keys(node.listIndexType).length
+  ) {
+    return `[index: number]: ${printChildrenType(node.listIndexType)};`;
+  }
+
+  return "";
+}
+
 function printExpressionType(node: AST_NODE) {
   if (node.type === EXPRESSION.VALUE) {
     return node.children !== undefined && Object.keys(node.children).length > 0
-      ? printChildrenType(node.children)
+      ? printChildrenType(node.children, printListIndexType(node))
       : "any";
   }
 
@@ -58,11 +74,15 @@ function printExpressionType(node: AST_NODE) {
     return `(${argumentCountToArgs(
       node.argumentCount || 0
     )}) => ${node.children !== undefined && Object.keys(node.children).length
-      ? printChildrenType(node.children)
+      ? printChildrenType(node.children, printListIndexType(node))
       : expressionToString(node.returnType)}`;
   }
 
   if (node.type === EXPRESSION.LIST) {
+    if (node.listIndexType !== undefined) {
+      return `{${printListIndexType(node)}}`;
+    }
+
     return "any[]";
   }
 

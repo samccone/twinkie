@@ -80,13 +80,17 @@ foo: () => any[];
     expect(
       printTree(
         astTreeFromString(`
+        <p>[[foo.abc]]</p>
         <template is="dom-repeat" items="[[foo]]">
             <div>[[item.zap]]</div>
+        </template>
+        <template is="dom-repeat" items="[[foo]]">
+            <div>[[item.tap]]</div>
         </template>
         `)
       )
     ).to.deep.equal(`export interface View {
-foo: {zap: any;}[];
+foo: {abc: any; [index: number]: {zap: any; tap: any;};};
 };`);
   });
 });

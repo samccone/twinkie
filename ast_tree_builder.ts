@@ -1,8 +1,6 @@
-import { AST_NODE, AST_TREE } from "./types";
+import { AST_NODE, AST_TREE, EXPRESSION } from "./types";
 
-function expressionIsChild(expression: string) {
-  return expression.indexOf("[]") !== -1;
-}
+const LIST_INDEX_TYPE_MATCHER_REGEX = /(.*)\[\]$/;
 
 function mergeNodeIntoTree(tree: AST_TREE, node: AST_NODE) {
   const existingNode = tree[node.expression];
@@ -34,12 +32,40 @@ function addNodeToTree(tree: AST_TREE, node: AST_NODE) {
   mergeNodeIntoTree(tree, node);
 }
 
+function addListIndexType(tree: AST_TREE, node: AST_NODE) {
+  const rootExpressionMatcher = node.expression.match(
+    LIST_INDEX_TYPE_MATCHER_REGEX
+  );
+
+  if (rootExpressionMatcher == null) {
+    throw new Error(`Unable to extract root expression from ${node}`);
+  }
+
+  const rootExpression = rootExpressionMatcher[1];
+
+  if (tree[rootExpression] === undefined) {
+    tree[rootExpression] = {
+      expression: rootExpression,
+      type: EXPRESSION.LIST,
+      listIndexType: node.children
+    };
+  } else {
+    if (tree[rootExpression].listIndexType === undefined) {
+      tree[rootExpression].listIndexType = {};
+    }
+
+    for (const child of Object.values(node.children)) {
+      mergeNodeIntoTree(tree[rootExpression].listIndexType!, child);
+    }
+  }
+}
+
 export function nodesToTree(nodes: AST_NODE[]) {
   const tree = {} as AST_TREE;
 
   for (const node of nodes) {
-    if (expressionIsChild(node.expression)) {
-      console.log("unhandled child expression", node);
+    if (node.expression.match(LIST_INDEX_TYPE_MATCHER_REGEX)) {
+      addListIndexType(tree, node);
     } else {
       addNodeToTree(tree, node);
     }

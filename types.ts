@@ -14,6 +14,7 @@ export interface AST_NODE {
   returnType?: EXPRESSION;
   argumentCount?: number;
   children?: AST_TREE;
+  listIndexType?: AST_TREE;
 }
 
 export interface AST_TREE {

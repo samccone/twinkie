@@ -5,25 +5,62 @@ import * as Cheerio from "cheerio";
 import { AliasMap, AST_NODE, EXPRESSION } from "./types";
 import { getExpressionsForNode } from "./ast_builder";
 
+function stringToNodes(html: string) {
+  const parsed = Cheerio.parseHTML(html);
+  const aliasMap: AliasMap = {};
+  const nodes: AST_NODE[] = [];
+
+  parsed.forEach(node => {
+    walkNodes(node, aliasMap, (node: CheerioElement, aliasMap: AliasMap) => {
+      nodes.push(...getExpressionsForNode(node, aliasMap));
+    });
+  });
+
+  return nodes;
+}
+
 describe("ast tree building", () => {
-  it("handles a nested node with a function in the middle", () => {
-    const parsed = Cheerio.parseHTML(`
+  it("handles dom-repeat nodes", () => {
+    const nodes = stringToNodes(`
+        <dom-module id="nest">
+            <template>
+                <template is="dom-repeat" items="[[foo]]">
+                  [[foo.name]]
+                  <template is="dom-repeat" items="[[foo.cows]]">
+                  </template>
+                </template>
+            </template>
+        </dom-module>`);
+
+    expect(nodesToTree(nodes)).to.deep.eq({
+      foo: {
+        children: {
+          name: {
+            children: {},
+            expression: "name",
+            type: EXPRESSION.VALUE
+          },
+          cows: {
+            children: {},
+            expression: "cows",
+            type: EXPRESSION.LIST
+          }
+        },
+        expression: "foo",
+        type: EXPRESSION.LIST
+      }
+    });
+  });
+
+  it("handles nested nodes", () => {
+    const nodes = stringToNodes(`
         <dom-module id="nest">
             <template>
                 <p>[[a]]</p>
                 <p>[[b.z]]</p>
                 <p>[[b.a.c(a, z).t]]</p>
             </template>
-        </dom-module>
-      `);
-    const aliasMap: AliasMap = {};
-    const nodes: AST_NODE[] = [];
-
-    parsed.forEach(node => {
-      walkNodes(node, aliasMap, (node: CheerioElement, aliasMap: AliasMap) => {
-        nodes.push(...getExpressionsForNode(node, aliasMap));
-      });
-    });
+        </dom-module>`);
 
     expect(nodesToTree(nodes)).to.deep.eq({
       a: {
