@@ -1,9 +1,9 @@
 import { AST_NODE, AST_TREE, EXPRESSION } from "./types";
 
-export function printTree(tree: AST_TREE) {
+export function printTree(tree: AST_TREE, interfaceName: string = "View") {
   let ret = "";
 
-  ret += "export interface View {\n";
+  ret += `export interface ${interfaceName} {\n`;
 
   for (const expression of Object.values(tree)) {
     expression.expression;

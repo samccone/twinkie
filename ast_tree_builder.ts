@@ -3,6 +3,11 @@ import { AST_NODE, AST_TREE, EXPRESSION } from "./types";
 const LIST_INDEX_TYPE_MATCHER_REGEX = /(.*)\[\]$/;
 
 function mergeNodeIntoTree(tree: AST_TREE, node: AST_NODE) {
+  if (node.expression.match(LIST_INDEX_TYPE_MATCHER_REGEX)) {
+    addListIndexType(tree, node);
+    return;
+  }
+
   if (tree[node.expression] === undefined) {
     tree[node.expression] = node;
   }
@@ -69,8 +74,6 @@ function addListIndexType(tree: AST_TREE, node: AST_NODE) {
 
 export function nodesToTree(nodes: AST_NODE[]) {
   const tree = {} as AST_TREE;
-  console.log(JSON.stringify(nodes, null, 2));
-
   for (const node of nodes) {
     if (node.expression.match(LIST_INDEX_TYPE_MATCHER_REGEX)) {
       addListIndexType(tree, node);
@@ -79,6 +82,5 @@ export function nodesToTree(nodes: AST_NODE[]) {
     }
   }
 
-  console.log(JSON.stringify(tree, null, 2));
   return tree;
 }

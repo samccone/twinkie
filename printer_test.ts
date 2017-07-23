@@ -118,7 +118,25 @@ foo: {p: any; [index: number]: any;};
 };`);
   });
 
-  it.only("handles nested dom-repeats", () => {
+  it("handles very nested dom-repeats", () => {
+    expect(
+      printTree(
+        astTreeFromString(`
+          <template is="dom-repeat" items="[[foo]]">
+            <template is="dom-repeat" items="[[item.tap]]" as="bob">
+              <template is="dom-repeat" items="[[bob.zap]]" as="next">
+                [[next.foo(1, 2)]]
+                <template is="dom-repeat" items="[[next.wow]]"></template>
+              </template>
+            </template>
+          </template>
+        `)
+      )
+    ).to.deep.equal(`export interface View {
+foo: {[index: number]: {tap: {[index: number]: {zap: {[index: number]: {foo: (arg0: any, arg1: any) => any; wow: any[];};};};};};};
+};`);
+  });
+  it("handles nested dom-repeats", () => {
     expect(
       printTree(
         astTreeFromString(`
@@ -131,7 +149,7 @@ foo: {p: any; [index: number]: any;};
         `)
       )
     ).to.deep.equal(`export interface View {
-foo: {[index: number]: {wow: any; tap: {[index: number]: {name: any};};};};
+foo: {[index: number]: {wow: any; tap: {[index: number]: {name: any;};};};};
 };`);
   });
 
