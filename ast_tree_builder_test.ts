@@ -20,6 +20,31 @@ function stringToNodes(html: string) {
 }
 
 describe("ast tree building", () => {
+  // nested dom-repeat case would be nice to add here
+
+  it("handles a dom-repeat as function with child", () => {
+    const nodes = stringToNodes(
+      `<template is="dom-repeat" items="[[wow()]]">[[item.zap]]</template>`
+    );
+
+    expect(nodesToTree(nodes)).to.deep.equal({
+      wow: {
+        expression: "wow",
+        type: EXPRESSION.FUNCTION,
+        returnType: EXPRESSION.LIST,
+        argumentCount: 0,
+        children: {},
+        listIndexType: {
+          zap: {
+            children: {},
+            expression: "zap",
+            type: EXPRESSION.VALUE
+          }
+        }
+      }
+    });
+  });
+
   it("handles dom-repeat nodes", () => {
     const nodes = stringToNodes(`
         <dom-module id="nest">
@@ -65,6 +90,7 @@ describe("ast tree building", () => {
     expect(nodesToTree(nodes)).to.deep.eq({
       a: {
         expression: "a",
+        children: {},
         type: EXPRESSION.VALUE
       },
       b: {
@@ -99,6 +125,7 @@ describe("ast tree building", () => {
       },
       z: {
         expression: "z",
+        children: {},
         type: EXPRESSION.VALUE
       }
     });

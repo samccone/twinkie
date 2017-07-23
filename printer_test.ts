@@ -76,6 +76,65 @@ foo: () => any[];
 };`);
   });
 
+  it("handles dom-repeat as function when using child attrs", () => {
+    expect(
+      printTree(
+        astTreeFromString(`
+          <template is="dom-repeat" items="[[foo()]]">
+            [[item.ok]]
+          </template>
+        `)
+      )
+    ).to.deep.equal(`export interface View {
+foo: () => {[index: number]: {ok: any;};};
+};`);
+  });
+
+  it("handles dom-repeat as function and has child attrs", () => {
+    expect(
+      printTree(
+        astTreeFromString(`
+          <p>[[foo.p]]</p>
+          <template is="dom-repeat" items="[[foo()]]">
+          </template>
+        `)
+      )
+    ).to.deep.equal(`export interface View {
+foo: {p: any; () => any[];};
+};`);
+  });
+
+  it("handles dom-repeat and has child attrs", () => {
+    expect(
+      printTree(
+        astTreeFromString(`
+          <p>[[foo.p]]</p>
+          <template is="dom-repeat" items="[[foo]]">
+          </template>
+        `)
+      )
+    ).to.deep.equal(`export interface View {
+foo: {p: any; [index: number]: any;};
+};`);
+  });
+
+  it.only("handles nested dom-repeats", () => {
+    expect(
+      printTree(
+        astTreeFromString(`
+          <template is="dom-repeat" items="[[foo]]">
+            [[item.wow]]
+            <template is="dom-repeat" items="[[item.tap]]" as="bob">
+              [[bob.name]]
+            </template>
+          </template>
+        `)
+      )
+    ).to.deep.equal(`export interface View {
+foo: {[index: number]: {wow: any; tap: {[index: number]: {name: any};};};};
+};`);
+  });
+
   it("handles a dom-repeat case", () => {
     expect(
       printTree(

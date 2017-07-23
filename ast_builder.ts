@@ -13,6 +13,8 @@ import {
   isDomRepeat
 } from "./utils";
 
+const FUNCTION_LIST_ACCESS_MATCHER = /(.*)\(\)\[\]$/;
+
 function expressionsToAstNodes(expressions: string[]) {
   return expressions.reduce((accum: AST_NODE[], expression) => {
     accum.push(...expressionToAstNodes(expression));
@@ -138,11 +140,14 @@ function dotExpressionToNestedExpression(
 function expressionToAstNodes(
   expression: string,
   knownType: EXPRESSION = EXPRESSION.VALUE
-) {
+): AST_NODE[] {
   const expressions: AST_NODE[] = [];
 
   if (isExpressionFunction(expression)) {
     expressions.push(...functionExpressionToAstNodes(expression, knownType));
+  } else if (expression.match(FUNCTION_LIST_ACCESS_MATCHER)) {
+    let rootExpression = expression.match(FUNCTION_LIST_ACCESS_MATCHER)![1];
+    return expressionToAstNodes(`${rootExpression}[]`);
   } else {
     if (expression.indexOf(".") !== -1) {
       expressions.push(

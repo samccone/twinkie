@@ -5,7 +5,7 @@ export function printTree(tree: AST_TREE) {
 
   ret += "export interface View {\n";
 
-  for (const expression of Object.values<AST_NODE>(tree)) {
+  for (const expression of Object.values(tree)) {
     expression.expression;
     ret += `${expression.expression}: ${printExpressionType(expression)};\n`;
   }
@@ -53,37 +53,50 @@ function argumentCountToArgs(count: number) {
 }
 
 function printListIndexType(node: AST_NODE) {
-  if (
-    node.listIndexType !== undefined &&
-    Object.keys(node.listIndexType).length
-  ) {
-    return `[index: number]: ${printChildrenType(node.listIndexType)};`;
+  if (treeHasNodes(node.listIndexType)) {
+    return `[index: number]: ${printChildrenType(node.listIndexType!)};`;
+  } else if (node.type === EXPRESSION.LIST) {
+    return `[index: number]: any;`;
   }
 
   return "";
 }
 
+function printFunctionExpression(node: AST_NODE) {
+  const root = `(${argumentCountToArgs(node.argumentCount || 0)}) =>`;
+
+  if (treeHasNodes(node.children)) {
+    return `${root} ${printChildrenType(
+      node.children!,
+      printListIndexType(node)
+    )}`;
+  } else if (node.listIndexType !== undefined) {
+    return `${root} ${printChildrenType({}, printListIndexType(node))}`;
+  }
+
+  return `${root} ${expressionToString(node.returnType)}`;
+}
+
+function treeHasNodes(tree?: AST_TREE) {
+  return tree !== undefined && Object.keys(tree).length > 0;
+}
+
 function printExpressionType(node: AST_NODE) {
   if (node.type === EXPRESSION.VALUE) {
-    return node.children !== undefined && Object.keys(node.children).length > 0
-      ? printChildrenType(node.children, printListIndexType(node))
+    return treeHasNodes(node.children)
+      ? printChildrenType(node.children!, printListIndexType(node))
       : "any";
   }
 
-  if (node.type === EXPRESSION.FUNCTION) {
-    return `(${argumentCountToArgs(
-      node.argumentCount || 0
-    )}) => ${node.children !== undefined && Object.keys(node.children).length
-      ? printChildrenType(node.children, printListIndexType(node))
-      : expressionToString(node.returnType)}`;
+  if (node.type === EXPRESSION.LIST) {
+    if (treeHasNodes(node.listIndexType) || treeHasNodes(node.children)) {
+      return printChildrenType(node.children || {}, printListIndexType(node));
+    }
+    return "any[]";
   }
 
-  if (node.type === EXPRESSION.LIST) {
-    if (node.listIndexType !== undefined) {
-      return `{${printListIndexType(node)}}`;
-    }
-
-    return "any[]";
+  if (node.type === EXPRESSION.FUNCTION) {
+    return printFunctionExpression(node);
   }
 
   return "any";
