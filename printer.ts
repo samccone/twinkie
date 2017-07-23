@@ -15,21 +15,22 @@ export function printTree(tree: AST_TREE, interfaceName: string = "View") {
   return ret;
 }
 
-function printChildrenType(
-  children: AST_TREE,
-  ...indexTypes: string[]
-): string {
-  return (
+function printChildrenType(children: AST_TREE, arrayType?: string): string {
+  const childType =
     "{" +
     Object.values(children)
       .map(childNode => {
         return `${childNode.expression}: ${printExpressionType(childNode)};`;
       })
-      .concat(indexTypes)
       .filter(v => v.length)
       .join(" ") +
-    "}"
-  );
+    "}";
+
+  if (arrayType) {
+    return `${arrayType} & ${childType}`;
+  }
+
+  return childType;
 }
 
 function expressionToString(expression: EXPRESSION = EXPRESSION.VALUE) {
@@ -54,9 +55,9 @@ function argumentCountToArgs(count: number) {
 
 function printListIndexType(node: AST_NODE) {
   if (treeHasNodes(node.listIndexType)) {
-    return `[index: number]: ${printChildrenType(node.listIndexType!)};`;
+    return `ArrayLike<${printChildrenType(node.listIndexType!)}>`;
   } else if (node.type === EXPRESSION.LIST) {
-    return `[index: number]: any;`;
+    return `ArrayLike<any>`;
   }
 
   return "";

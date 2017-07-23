@@ -86,7 +86,7 @@ foo: () => any[];
         `)
       )
     ).to.deep.equal(`export interface View {
-foo: () => {[index: number]: {ok: any;};};
+foo: () => ArrayLike<{ok: any;}> & {};
 };`);
   });
 
@@ -100,7 +100,7 @@ foo: () => {[index: number]: {ok: any;};};
         `)
       )
     ).to.deep.equal(`export interface View {
-foo: {p: any; () => any[];};
+foo: ArrayLike<any> & {p: any;};
 };`);
   });
 
@@ -114,7 +114,7 @@ foo: {p: any; () => any[];};
         `)
       )
     ).to.deep.equal(`export interface View {
-foo: {p: any; [index: number]: any;};
+foo: ArrayLike<any> & {p: any;};
 };`);
   });
 
@@ -133,9 +133,10 @@ foo: {p: any; [index: number]: any;};
         `)
       )
     ).to.deep.equal(`export interface View {
-foo: {[index: number]: {tap: {[index: number]: {zap: {[index: number]: {foo: (arg0: any, arg1: any) => any; wow: any[];};};};};};};
+foo: ArrayLike<{tap: ArrayLike<{zap: ArrayLike<{foo: (arg0: any, arg1: any) => any; wow: any[];}> & {};}> & {};}> & {};
 };`);
   });
+
   it("handles nested dom-repeats", () => {
     expect(
       printTree(
@@ -149,7 +150,7 @@ foo: {[index: number]: {tap: {[index: number]: {zap: {[index: number]: {foo: (ar
         `)
       )
     ).to.deep.equal(`export interface View {
-foo: {[index: number]: {wow: any; tap: {[index: number]: {name: any;};};};};
+foo: ArrayLike<{wow: any; tap: ArrayLike<{name: any;}> & {};}> & {};
 };`);
   });
 
@@ -167,7 +168,7 @@ foo: {[index: number]: {wow: any; tap: {[index: number]: {name: any;};};};};
         `)
       )
     ).to.deep.equal(`export interface View {
-foo: {abc: any; [index: number]: {zap: any; tap: any;};};
+foo: ArrayLike<{zap: any; tap: any;}> & {abc: any;};
 };`);
   });
 });
