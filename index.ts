@@ -6,7 +6,10 @@ import { getExpressionsForNode } from "./ast_builder";
 import { nodesToTree } from "./ast_tree_builder";
 import { printTree } from "./printer";
 
-export function generateInterface(htmlPath: string) {
+export function generateInterface(
+  htmlPath: string,
+  interfaceName: string = "TemplateInterface"
+) {
   const nodes: AST_NODE[] = [];
   const sample = fs.readFileSync(htmlPath, "utf-8");
   const parsed = Cheerio.parseHTML(sample);
@@ -18,5 +21,5 @@ export function generateInterface(htmlPath: string) {
     });
   });
 
-  console.log(printTree(nodesToTree(nodes)));
+  return printTree(nodesToTree(nodes), interfaceName);
 }
