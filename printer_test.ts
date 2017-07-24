@@ -21,6 +21,20 @@ function astTreeFromString(str: string) {
 }
 
 describe("printing", () => {
+  it("handles dom-repeat when alias value is used as an arg", () => {
+    expect(
+      printTree(
+        astTreeFromString(`
+            <template is="dom-repeat" items="[[zap]]">
+              <p>[[someCall(item.foo)]]</p>
+            </template>
+        `)
+      )
+    ).to.deep.equal(`export interface View {
+zap: ArrayLike<{foo: any;}> & {};
+someCall: (arg0: any) => any;
+};`);
+  });
   it("handes dom-repeat as function with * observer", () => {
     expect(
       printTree(

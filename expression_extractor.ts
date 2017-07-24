@@ -120,9 +120,9 @@ export function extractExpression(str: string, aliasMap: AliasMap) {
   ret = ret.map(expression => {
     if (isExpressionFunction(expression)) {
       return replaceFunctionArguments(expression, (v) => {
-        return removeObserverPostfixes(
+        return  unAliasExpressions(removeObserverPostfixes(
           stripNegationPrefixes(stripNativeBindingPostfixes([v]))
-        ).join('');
+        ), aliasMap).join('');
       });
     }
 
