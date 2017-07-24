@@ -11,5 +11,5 @@
     "lib": ["es2017"]
   },
   "exclude": ["node_modules"],
-  "include": ["*.ts"]
+  "include": ["*.ts", "*.d.ts"]
 }
