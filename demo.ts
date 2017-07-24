@@ -10,7 +10,7 @@ import { printTree } from "./printer";
 const nodes: AST_NODE[] = [];
 
 const sample = fs.readFileSync(
-  path.join(__dirname, "test/data/simple.html"),
+  path.join(__dirname, "test/data/paper-typeahead.html"),
   "utf-8"
 );
 const parsed = Cheerio.parseHTML(sample);
