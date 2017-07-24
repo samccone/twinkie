@@ -13,5 +13,23 @@
     "mocha": "^3.4.2",
     "ts-node": "^3.2.0",
     "typescript": "^2.4.1"
-  }
+  },
+  "name": "twinkie",
+  "description": "Automatic template interfaces from polymer template files",
+  "version": "0.0.1",
+  "main": "index.js",
+  "directories": {
+    "test": "test"
+  },
+  "repository": {
+    "type": "git",
+    "url": "git+https://github.com/samccone/template.git"
+  },
+  "keywords": ["polymer", "template"],
+  "author": "Sam Saccone",
+  "license": "Apache-2.0",
+  "bugs": {
+    "url": "https://github.com/samccone/template/issues"
+  },
+  "homepage": "https://github.com/samccone/template#readme"
 }
