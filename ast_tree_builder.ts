@@ -68,7 +68,7 @@ function addListIndexType(tree: AST_TREE, node: AST_NODE) {
     tree[rootExpression].listIndexType = {};
   }
 
-  for (const childKey of Object.keys(node.children)) {
+  for (const childKey of Object.keys(node.children || {})) {
     const child = node.children![childKey];
     mergeNodeIntoTree(tree[rootExpression].listIndexType!, child);
   }
