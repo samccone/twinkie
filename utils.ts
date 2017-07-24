@@ -22,6 +22,16 @@ export function getFunctionArguments(functionExpression: string) {
   return [];
 }
 
+export function replaceFunctionArguments(
+  functionExpression: string,
+  mapper: (arg: string) => string
+) {
+  const functionName = functionExpression.match(FUNCTION_MATCHER)![1];
+  const functionArgs = getFunctionArguments(functionExpression);
+
+  return `${functionName}(${functionArgs.map(arg => mapper(arg)).join(",")})`;
+}
+
 export function getFunctionName(functionExpression: string) {
   const match = functionExpression.match(FUNCTION_MATCHER);
 

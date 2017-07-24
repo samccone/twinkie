@@ -9,6 +9,14 @@ describe("strips observer paths", () => {
   it("handles stripping observers", () => {
     expect(removeObserverPostfixes(["a.*"])).to.deep.equal(["a"]);
   });
+
+  it("handles stripping observers when negated arguments", () => {
+    expect(extractExpression("[[b(!a)]]", {})).to.deep.equal(["b(a)"]);
+  });
+
+  it("handles stripping observers when in arguments", () => {
+    expect(extractExpression("[[b(a.*)]]", {})).to.deep.equal(["b(a)"]);
+  });
 });
 
 describe("strips primitives", () => {

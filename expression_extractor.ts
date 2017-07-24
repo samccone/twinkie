@@ -7,6 +7,7 @@ const IS_BOOL_PRMITIVE_REGEX = /^true$|^false$/;
 const NATIVE_BINDING_REGEX = /^(.*)::.*$/;
 
 import { AliasMap } from "./types";
+import {isExpressionFunction, replaceFunctionArguments} from "./utils";
 
 function unAliasExpressions(expressions: string[], aliasMap: AliasMap) {
   return expressions.map(expression => {
@@ -115,6 +116,18 @@ export function extractExpression(str: string, aliasMap: AliasMap) {
   if (Object.keys(aliasMap).length > 0) {
     ret = unAliasExpressions(ret, aliasMap);
   }
+
+  ret = ret.map(expression => {
+    if (isExpressionFunction(expression)) {
+      return replaceFunctionArguments(expression, (v) => {
+        return removeObserverPostfixes(
+          stripNegationPrefixes(stripNativeBindingPostfixes([v]))
+        ).join('');
+      });
+    }
+
+    return expression;
+  });
 
   return ret;
 }
