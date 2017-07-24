@@ -90,20 +90,6 @@ foo: () => ArrayLike<{ok: any;}> & {};
 };`);
   });
 
-  it("handles dom-repeat as function and has child attrs", () => {
-    expect(
-      printTree(
-        astTreeFromString(`
-          <p>[[foo.p]]</p>
-          <template is="dom-repeat" items="[[foo()]]">
-          </template>
-        `)
-      )
-    ).to.deep.equal(`export interface View {
-foo: ArrayLike<any> & {p: any;};
-};`);
-  });
-
   it("handles dom-repeat and has child attrs", () => {
     expect(
       printTree(
