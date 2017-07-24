@@ -4,6 +4,7 @@ const IS_NUMBER_PRIMITIVE_REGEX = /^\d+$/;
 const HAS_POSTFIX_OBSERVER_REGEX = /^.*\.\*$/;
 const IS_STRING_PRIMITIVE_REGEX = /^".*"$|^'.*'$/;
 const IS_BOOL_PRMITIVE_REGEX = /^true$|^false$/;
+const NATIVE_BINDING_REGEX = /^(.*)::.*$/;
 
 import { AliasMap } from "./types";
 
@@ -46,6 +47,18 @@ export function stripNegationPrefixes(expressions: string[]) {
     }
 
     return v;
+  });
+}
+
+function stripNativeBindingPostfixes(expressions: string[]) {
+  return expressions.map(expression => {
+    const match = expression.match(NATIVE_BINDING_REGEX);
+
+    if (match != null) {
+      return match[1];
+    }
+
+    return expression;
   });
 }
 
@@ -95,7 +108,9 @@ export function extractExpression(str: string, aliasMap: AliasMap) {
     break;
   }
 
-  ret = removeObserverPostfixes(stripNegationPrefixes(ret));
+  ret = removeObserverPostfixes(
+    stripNegationPrefixes(stripNativeBindingPostfixes(ret))
+  );
 
   if (Object.keys(aliasMap).length > 0) {
     ret = unAliasExpressions(ret, aliasMap);

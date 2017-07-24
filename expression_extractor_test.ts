@@ -40,6 +40,10 @@ describe("strips negation prefixes", () => {
   });
 });
 
+describe("native event bindings", () => {
+  expect(extractExpression("[[zap::input]]", {})).to.deep.equal(["zap"]);
+});
+
 describe("extracting expressions", () => {
   it("handles an empty string", () => {
     expect(extractExpression("", {})).to.deep.equal([]);
