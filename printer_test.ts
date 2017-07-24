@@ -31,9 +31,10 @@ describe("printing", () => {
         `)
       )
     ).to.deep.equal(`export interface View {
-zap: ArrayLike<{foo: any;}> & {};
-someCall: (arg0: any) => any;
+zap: null|undefined|ArrayLike<{foo: any|null|undefined;}|null|undefined> & {};
+someCall: (arg0: any|null|undefined) => any|null|undefined;
 };`);
+
   });
   it("handes dom-repeat as function with * observer", () => {
     expect(
@@ -45,8 +46,8 @@ someCall: (arg0: any) => any;
         `)
       )
     ).to.deep.equal(`export interface View {
-getFoo: (arg0: any) => ArrayLike<{foo: any[];}> & {};
-bob: {tap: any;};
+getFoo: (arg0: any|null|undefined) => null|undefined|ArrayLike<{foo: (any|null|undefined)[]|null|undefined;}|null|undefined> & {};
+bob: {tap: any|null|undefined;};
 };`);
   });
 
@@ -59,10 +60,10 @@ bob: {tap: any;};
         `)
       )
     ).to.deep.equal(`export interface View {
-a: any;
-b: (arg0: any, arg1: any) => any;
-c: any;
-d: any;
+a: any|null|undefined;
+b: (arg0: any|null|undefined, arg1: any|null|undefined) => any|null|undefined;
+c: any|null|undefined;
+d: any|null|undefined;
 };`);
   });
 
@@ -76,7 +77,7 @@ d: any;
         `)
       )
     ).to.deep.equal(`export interface View {
-a: {d: any; b: {c: any;};};
+a: {d: any|null|undefined; b: {c: any|null|undefined;};};
 };`);
   });
 
@@ -88,7 +89,7 @@ a: {d: any; b: {c: any;};};
         `)
       )
     ).to.deep.equal(`export interface View {
-a: () => {z: any;};
+a: () => {z: any|null|undefined;};
 };`);
   });
 
@@ -101,7 +102,7 @@ a: () => {z: any;};
         `)
       )
     ).to.deep.equal(`export interface View {
-foo: () => any[];
+foo: () => (any|null|undefined)[]|null|undefined;
 };`);
   });
 
@@ -115,7 +116,7 @@ foo: () => any[];
         `)
       )
     ).to.deep.equal(`export interface View {
-foo: () => ArrayLike<{ok: any;}> & {};
+foo: () => null|undefined|ArrayLike<{ok: any|null|undefined;}|null|undefined> & {};
 };`);
   });
 
@@ -129,7 +130,7 @@ foo: () => ArrayLike<{ok: any;}> & {};
         `)
       )
     ).to.deep.equal(`export interface View {
-foo: ArrayLike<any> & {p: any;};
+foo: null|undefined|ArrayLike<any|null|undefined> & {p: any|null|undefined;};
 };`);
   });
 
@@ -148,7 +149,7 @@ foo: ArrayLike<any> & {p: any;};
         `)
       )
     ).to.deep.equal(`export interface View {
-foo: ArrayLike<{tap: ArrayLike<{zap: ArrayLike<{foo: (arg0: any, arg1: any) => any; wow: any[];}> & {};}> & {};}> & {};
+foo: null|undefined|ArrayLike<{tap: null|undefined|ArrayLike<{zap: null|undefined|ArrayLike<{foo: (arg0: any|null|undefined, arg1: any|null|undefined) => any|null|undefined; wow: (any|null|undefined)[]|null|undefined;}|null|undefined> & {};}|null|undefined> & {};}|null|undefined> & {};
 };`);
   });
 
@@ -165,7 +166,7 @@ foo: ArrayLike<{tap: ArrayLike<{zap: ArrayLike<{foo: (arg0: any, arg1: any) => a
         `)
       )
     ).to.deep.equal(`export interface View {
-foo: ArrayLike<{wow: any; tap: ArrayLike<{name: any;}> & {};}> & {};
+foo: null|undefined|ArrayLike<{wow: any|null|undefined; tap: null|undefined|ArrayLike<{name: any|null|undefined;}|null|undefined> & {};}|null|undefined> & {};
 };`);
   });
 
@@ -183,7 +184,7 @@ foo: ArrayLike<{wow: any; tap: ArrayLike<{name: any;}> & {};}> & {};
         `)
       )
     ).to.deep.equal(`export interface View {
-foo: ArrayLike<{zap: any; tap: any;}> & {abc: any;};
+foo: null|undefined|ArrayLike<{zap: any|null|undefined; tap: any|null|undefined;}|null|undefined> & {abc: any|null|undefined;};
 };`);
   });
 });
