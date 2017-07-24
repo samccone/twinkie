@@ -2,6 +2,8 @@ import { AliasMap } from "./types";
 import { isDomRepeat } from "./utils";
 import { extractExpression } from "./expression_extractor";
 
+const BLACKLISTED_TAGS = new Set(["style", "script"]);
+
 export function extractNodeAttributes(node: CheerioElement) {
   const ret = [];
   for (const attrKey of Object.keys(node.attribs || {})) {
@@ -44,9 +46,11 @@ export function walkNodes(
     )[0]}[]`;
   }
 
-  (node.childNodes || []).forEach(childNode => {
-    walkNodes(childNode, aliasMap, fn);
-  });
+  if (!BLACKLISTED_TAGS.has(node.type)) {
+    (node.childNodes || []).forEach(childNode => {
+      walkNodes(childNode, aliasMap, fn);
+    });
+  }
 
   if (aliasInPlace && aliasName !== undefined) {
     delete aliasMap[aliasName];

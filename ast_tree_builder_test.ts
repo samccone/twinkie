@@ -22,6 +22,18 @@ function stringToNodes(html: string) {
 describe("ast tree building", () => {
   // nested dom-repeat case would be nice to add here
 
+  it("ignores style tags", () => {
+    const nodes = stringToNodes(`<style>[[wow]]</style>`);
+
+    expect(nodesToTree(nodes)).to.deep.equal({});
+  });
+
+  it("ignores script tags", () => {
+    const nodes = stringToNodes(`<script>[[wow]]</script>`);
+
+    expect(nodesToTree(nodes)).to.deep.equal({});
+  });
+
   it("handles a dom-repeat as function with child", () => {
     const nodes = stringToNodes(
       `<template is="dom-repeat" items="[[wow()]]">[[item.zap]]</template>`
