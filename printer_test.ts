@@ -21,6 +21,21 @@ function astTreeFromString(str: string) {
 }
 
 describe("printing", () => {
+  it("handes dom-repeat as function with * observer", () => {
+    expect(
+      printTree(
+        astTreeFromString(`
+            <template is="dom-repeat" items="[[getFoo(bob.tap.*)]]">
+              <template is="dom-repeat" items="[[item.foo]]"></template>
+            </template>
+        `)
+      )
+    ).to.deep.equal(`export interface View {
+getFoo: (arg0: any) => ArrayLike<{foo: any[];}> & {};
+bob: {tap: any;};
+};`);
+  });
+
   it("handles a simple case", () => {
     expect(
       printTree(

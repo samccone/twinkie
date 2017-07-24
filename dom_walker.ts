@@ -1,7 +1,6 @@
 import { AliasMap } from "./types";
-import { isDomRepeat } from "./utils";
+import { isDomRepeat, isExpressionFunction, getFunctionName } from "./utils";
 import { extractExpression } from "./expression_extractor";
-
 const BLACKLISTED_TAGS = new Set(["style", "script"]);
 
 export function extractNodeAttributes(node: CheerioElement) {
@@ -39,11 +38,18 @@ export function walkNodes(
   let aliasName: string | undefined = undefined;
 
   if (aliasInPlace) {
-    aliasName = node.attribs["as"] || "item";
-    aliasMap[aliasName] = `${extractExpression(
+    const extractedExpression = extractExpression(
       node.attribs["items"],
       aliasMap
-    )[0]}[]`;
+    )[0];
+
+    aliasName = node.attribs["as"] || "item";
+
+    if (isExpressionFunction(extractedExpression)) {
+      aliasMap[aliasName] = `${getFunctionName(extractedExpression)}[]`;
+    } else {
+      aliasMap[aliasName] = `${extractedExpression}[]`;
+    }
   }
 
   if (!BLACKLISTED_TAGS.has(node.type)) {

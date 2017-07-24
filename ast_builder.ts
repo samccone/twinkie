@@ -23,7 +23,7 @@ function expressionsToAstNodes(expressions: string[]) {
 }
 
 /**
- * 
+ *
  * turns a.b(c.z).g
  * into
  * [a, b(c.z), g]
@@ -149,7 +149,7 @@ function expressionToAstNodes(
     let rootExpression = expression.match(FUNCTION_LIST_ACCESS_MATCHER)![1];
     return expressionToAstNodes(`${rootExpression}[]`);
   } else {
-    if (expression.indexOf(".") !== -1) {
+    if (expressionHasChildExpressions(expression)) {
       expressions.push(
         ...dotExpressionToNestedExpression(expression, knownType)
       );
@@ -162,6 +162,10 @@ function expressionToAstNodes(
   }
 
   return expressions;
+}
+
+function expressionHasChildExpressions(expression: string) {
+  return splitExpressionOnOuterPeriods(expression).length > 1;
 }
 
 function getExpressionForDomRepeatItems(
