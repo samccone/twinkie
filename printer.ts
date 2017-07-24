@@ -5,7 +5,8 @@ export function printTree(tree: AST_TREE, interfaceName: string = "View") {
 
   ret += `export interface ${interfaceName} {\n`;
 
-  for (const expression of Object.values(tree)) {
+  for (const expressionKey of Object.keys(tree)) {
+    const expression = tree[expressionKey];
     expression.expression;
     ret += `${expression.expression}: ${printExpressionType(expression)};\n`;
   }
@@ -18,7 +19,8 @@ export function printTree(tree: AST_TREE, interfaceName: string = "View") {
 function printChildrenType(children: AST_TREE, arrayType?: string): string {
   const childType =
     "{" +
-    Object.values(children)
+    Object.keys(children)
+      .map(childKey => children[childKey])
       .map(childNode => {
         return `${childNode.expression}: ${printExpressionType(childNode)};`;
       })
@@ -42,6 +44,8 @@ function expressionToString(expression: EXPRESSION = EXPRESSION.VALUE) {
     case EXPRESSION.FUNCTION:
       return "() => any";
   }
+
+  return 'any';
 }
 
 function argumentCountToArgs(count: number) {

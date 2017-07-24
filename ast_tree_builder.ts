@@ -23,7 +23,8 @@ function mergeNodeIntoTree(tree: AST_TREE, node: AST_NODE) {
   }
 
   if (existingNode.children !== undefined) {
-    for (const child of Object.values(node.children)) {
+    for (const childKey of Object.keys(node.children)) {
+      const child = node.children[childKey];
       if (child.expression.match(LIST_INDEX_TYPE_MATCHER_REGEX)) {
         addListIndexType(existingNode.children, child);
       } else {
@@ -67,7 +68,8 @@ function addListIndexType(tree: AST_TREE, node: AST_NODE) {
     tree[rootExpression].listIndexType = {};
   }
 
-  for (const child of Object.values(node.children)) {
+  for (const childKey of Object.keys(node.children)) {
+    const child = node.children![childKey];
     mergeNodeIntoTree(tree[rootExpression].listIndexType!, child);
   }
 }
