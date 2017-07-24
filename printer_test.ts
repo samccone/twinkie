@@ -31,7 +31,7 @@ describe("printing", () => {
         `)
       )
     ).to.deep.equal(`export interface View {
-zap: null|undefined|ArrayLike<{foo: any|null|undefined;}|null|undefined> & {};
+zap: null|undefined|ArrayLike<null|undefined|{foo: any|null|undefined;}|null|undefined> & null|undefined|{};
 someCall: (arg0: any|null|undefined) => any|null|undefined;
 };`);
 
@@ -46,8 +46,8 @@ someCall: (arg0: any|null|undefined) => any|null|undefined;
         `)
       )
     ).to.deep.equal(`export interface View {
-getFoo: (arg0: any|null|undefined) => null|undefined|ArrayLike<{foo: (any|null|undefined)[]|null|undefined;}|null|undefined> & {};
-bob: {tap: any|null|undefined;};
+getFoo: (arg0: any|null|undefined) => null|undefined|ArrayLike<null|undefined|{foo: (any|null|undefined)[]|null|undefined;}|null|undefined> & null|undefined|{};
+bob: null|undefined|{tap: any|null|undefined;};
 };`);
   });
 
@@ -77,7 +77,7 @@ d: any|null|undefined;
         `)
       )
     ).to.deep.equal(`export interface View {
-a: {d: any|null|undefined; b: {c: any|null|undefined;};};
+a: null|undefined|{d: any|null|undefined; b: null|undefined|{c: any|null|undefined;};};
 };`);
   });
 
@@ -89,7 +89,7 @@ a: {d: any|null|undefined; b: {c: any|null|undefined;};};
         `)
       )
     ).to.deep.equal(`export interface View {
-a: () => {z: any|null|undefined;};
+a: () => null|undefined|{z: any|null|undefined;};
 };`);
   });
 
@@ -116,7 +116,7 @@ foo: () => (any|null|undefined)[]|null|undefined;
         `)
       )
     ).to.deep.equal(`export interface View {
-foo: () => null|undefined|ArrayLike<{ok: any|null|undefined;}|null|undefined> & {};
+foo: () => null|undefined|ArrayLike<null|undefined|{ok: any|null|undefined;}|null|undefined> & null|undefined|{};
 };`);
   });
 
@@ -130,7 +130,7 @@ foo: () => null|undefined|ArrayLike<{ok: any|null|undefined;}|null|undefined> & 
         `)
       )
     ).to.deep.equal(`export interface View {
-foo: null|undefined|ArrayLike<any|null|undefined> & {p: any|null|undefined;};
+foo: null|undefined|ArrayLike<any|null|undefined> & null|undefined|{p: any|null|undefined;};
 };`);
   });
 
@@ -149,7 +149,7 @@ foo: null|undefined|ArrayLike<any|null|undefined> & {p: any|null|undefined;};
         `)
       )
     ).to.deep.equal(`export interface View {
-foo: null|undefined|ArrayLike<{tap: null|undefined|ArrayLike<{zap: null|undefined|ArrayLike<{foo: (arg0: any|null|undefined, arg1: any|null|undefined) => any|null|undefined; wow: (any|null|undefined)[]|null|undefined;}|null|undefined> & {};}|null|undefined> & {};}|null|undefined> & {};
+foo: null|undefined|ArrayLike<null|undefined|{tap: null|undefined|ArrayLike<null|undefined|{zap: null|undefined|ArrayLike<null|undefined|{foo: (arg0: any|null|undefined, arg1: any|null|undefined) => any|null|undefined; wow: (any|null|undefined)[]|null|undefined;}|null|undefined> & null|undefined|{};}|null|undefined> & null|undefined|{};}|null|undefined> & null|undefined|{};
 };`);
   });
 
@@ -166,7 +166,7 @@ foo: null|undefined|ArrayLike<{tap: null|undefined|ArrayLike<{zap: null|undefine
         `)
       )
     ).to.deep.equal(`export interface View {
-foo: null|undefined|ArrayLike<{wow: any|null|undefined; tap: null|undefined|ArrayLike<{name: any|null|undefined;}|null|undefined> & {};}|null|undefined> & {};
+foo: null|undefined|ArrayLike<null|undefined|{wow: any|null|undefined; tap: null|undefined|ArrayLike<null|undefined|{name: any|null|undefined;}|null|undefined> & null|undefined|{};}|null|undefined> & null|undefined|{};
 };`);
   });
 
@@ -184,7 +184,7 @@ foo: null|undefined|ArrayLike<{wow: any|null|undefined; tap: null|undefined|Arra
         `)
       )
     ).to.deep.equal(`export interface View {
-foo: null|undefined|ArrayLike<{zap: any|null|undefined; tap: any|null|undefined;}|null|undefined> & {abc: any|null|undefined;};
+foo: null|undefined|ArrayLike<null|undefined|{zap: any|null|undefined; tap: any|null|undefined;}|null|undefined> & null|undefined|{abc: any|null|undefined;};
 };`);
   });
 });

@@ -18,7 +18,7 @@ export function printTree(tree: AST_TREE, interfaceName: string = "View") {
 
 function printChildrenType(children: AST_TREE, arrayType?: string): string {
   const childType =
-    "{" +
+    "null|undefined|{" +
     Object.keys(children)
       .map(childKey => children[childKey])
       .map(childNode => {
