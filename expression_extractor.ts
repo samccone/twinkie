@@ -7,7 +7,7 @@ const IS_BOOL_PRMITIVE_REGEX = /^true$|^false$/;
 const NATIVE_BINDING_REGEX = /^(.*)::.*$/;
 
 import { AliasMap } from "./types";
-import {isExpressionFunction, replaceFunctionArguments} from "./utils";
+import { isExpressionFunction, replaceFunctionArguments } from "./utils";
 
 function unAliasExpressions(expressions: string[], aliasMap: AliasMap) {
   return expressions.map(expression => {
@@ -119,15 +119,32 @@ export function extractExpression(str: string, aliasMap: AliasMap) {
 
   ret = ret.map(expression => {
     if (isExpressionFunction(expression)) {
-      return replaceFunctionArguments(expression, (v) => {
-        return  unAliasExpressions(removeObserverPostfixes(
-          stripNegationPrefixes(stripNativeBindingPostfixes([v]))
-        ), aliasMap).join('');
+      return replaceFunctionArguments(expression, v => {
+        let ret = unAliasExpressions(
+          removeObserverPostfixes(
+            stripNegationPrefixes(stripNativeBindingPostfixes([v]))
+          ),
+          aliasMap
+        );
+
+        // If we have an alias in place, that means we are in a dom-repeat
+        // we need to replace the arg with a primitive.
+        if (Object.keys(aliasMap).length) {
+          ret = ret.map(v => (v === "index" ? '"fake_index"' : v));
+        }
+
+        return ret.join("");
       });
     }
 
     return expression;
   });
+
+  // If we have an alias in place, that means we are in a dom-repeat
+  // we need to filter out the index expression.
+  if (Object.keys(aliasMap).length) {
+    ret = ret.filter(v => v !== "index");
+  }
 
   return ret;
 }

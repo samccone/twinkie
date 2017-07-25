@@ -21,6 +21,35 @@ function astTreeFromString(str: string) {
 }
 
 describe("printing", () => {
+  it("handles dom-repeat when using index", () => {
+    expect(
+      printTree(
+        astTreeFromString(`
+            <template is="dom-repeat" items="[[zap]]">
+              [[index]]
+            </template>
+        `)
+      )
+    ).to.deep.equal(`export interface View {
+zap: (any|null|undefined)[]|null|undefined;
+};`);
+  });
+
+  it("handles dom-repeat when using index as function arg", () => {
+    expect(
+      printTree(
+        astTreeFromString(`
+            <template is="dom-repeat" items="[[zap]]">
+              [[foo(index)]]
+            </template>
+        `)
+      )
+    ).to.deep.equal(`export interface View {
+zap: (any|null|undefined)[]|null|undefined;
+foo: (arg0: any|null|undefined) => any|null|undefined;
+};`);
+  });
+
   it("handles dom-repeat when alias value is used as an arg", () => {
     expect(
       printTree(
@@ -34,7 +63,6 @@ describe("printing", () => {
 zap: null|undefined|ArrayLike<null|undefined|{foo: any|null|undefined;}|null|undefined> & null|undefined|{};
 someCall: (arg0: any|null|undefined) => any|null|undefined;
 };`);
-
   });
   it("handes dom-repeat as function with * observer", () => {
     expect(
