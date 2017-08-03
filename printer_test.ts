@@ -21,6 +21,20 @@ function astTreeFromString(str: string) {
 }
 
 describe("printing", () => {
+  it("handles index-as aliasing", () => {
+    expect(
+      printTree(
+        astTreeFromString(`
+      <template is="dom-repeat" items="[[items]]" index-as="zap">
+        [[zap]]
+      </template>
+    `)
+      )
+    ).to.deep.equal(`export interface View {
+items: (any|null|undefined)[]|null|undefined;
+};`);
+  });
+
   it("handles a function with a -1 param", () => {
     expect(
       printTree(

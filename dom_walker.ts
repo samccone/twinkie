@@ -34,22 +34,23 @@ export function walkNodes(
 
   fn(node, aliasMap);
 
-  const aliasInPlace = isDomRepeat(node);
-  let aliasName: string | undefined = undefined;
+  const isDomRepeatNode = isDomRepeat(node);
+  let itemAliasName: string | undefined = undefined;
+  let indexAsAliasName: string | undefined = undefined;
 
-  if (aliasInPlace) {
-    const extractedExpression = extractExpression(
-      node.attribs["items"],
-      aliasMap
-    )[0];
+  if (isDomRepeatNode) {
+    const asExpression = extractExpression(node.attribs["items"], aliasMap)[0];
 
-    aliasName = node.attribs["as"] || "item";
+    itemAliasName = node.attribs["as"] || "item";
+    indexAsAliasName = node.attribs["index-as"] || "index";
 
-    if (isExpressionFunction(extractedExpression)) {
-      aliasMap[aliasName] = `${getFunctionName(extractedExpression)}[]`;
+    if (isExpressionFunction(asExpression)) {
+      aliasMap[itemAliasName] = `${getFunctionName(asExpression)}[]`;
     } else {
-      aliasMap[aliasName] = `${extractedExpression}[]`;
+      aliasMap[itemAliasName] = `${asExpression}[]`;
     }
+
+    aliasMap[indexAsAliasName] = "index";
   }
 
   if (!BLACKLISTED_TAGS.has(node.type)) {
@@ -58,7 +59,12 @@ export function walkNodes(
     });
   }
 
-  if (aliasInPlace && aliasName !== undefined) {
-    delete aliasMap[aliasName];
+  if (
+    isDomRepeatNode &&
+    itemAliasName !== undefined &&
+    indexAsAliasName !== undefined
+  ) {
+    delete aliasMap[itemAliasName];
+    delete aliasMap[indexAsAliasName];
   }
 }
