@@ -21,6 +21,18 @@ function astTreeFromString(str: string) {
 }
 
 describe("printing", () => {
+  it("handles a function with a -1 param", () => {
+    expect(
+      printTree(
+        astTreeFromString(`
+          [[foo(-1)]]
+        `)
+      )
+    ).to.deep.equal(`export interface View {
+foo: (arg0: any|null|undefined) => any|null|undefined;
+};`);
+  });
+
   it("handles dom-repeat when using index", () => {
     expect(
       printTree(

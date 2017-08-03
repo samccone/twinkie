@@ -1,6 +1,6 @@
 const ONE_WAY_BINDING_REGEX = /\[\[(.*?)\]\]/;
 const TWO_WAY_BINDING_REGEX = /\{\{(.*?)\}\}/;
-const IS_NUMBER_PRIMITIVE_REGEX = /^\d+$/;
+const IS_NUMBER_PRIMITIVE_REGEX = /^-?\d+$/;
 const HAS_POSTFIX_OBSERVER_REGEX = /^.*\.\*$/;
 const IS_STRING_PRIMITIVE_REGEX = /^".*"$|^'.*'$/;
 const IS_BOOL_PRMITIVE_REGEX = /^true$|^false$/;
