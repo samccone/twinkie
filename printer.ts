@@ -38,7 +38,7 @@ function printChildrenType(children: AST_TREE, arrayType?: string): string {
 function expressionToString(expression: EXPRESSION = EXPRESSION.VALUE) {
   switch (expression) {
     case EXPRESSION.LIST:
-      return "(any|null|undefined)[]|null|undefined";
+      return "null|undefined|ArrayLike<any|null|undefined>";
     case EXPRESSION.VALUE:
       return "any|null|undefined";
     case EXPRESSION.FUNCTION:
@@ -57,7 +57,15 @@ function argumentCountToArgs(count: number) {
     .join(", ");
 }
 
-function printListIndexType(node: AST_NODE) {
+function printListIndexType(node: AST_NODE): string {
+  if (
+    treeHasNodes(node.listIndexType) &&
+    node.listIndexType!["[]"] !== undefined
+  ) {
+    return `null|undefined|ArrayLike<${printExpressionType(
+      node.listIndexType!["[]"]
+    )}>`;
+  }
   if (treeHasNodes(node.listIndexType)) {
     return `null|undefined|ArrayLike<${printChildrenType(
       node.listIndexType!
@@ -99,7 +107,7 @@ function printExpressionType(node: AST_NODE) {
     if (treeHasNodes(node.listIndexType) || treeHasNodes(node.children)) {
       return printChildrenType(node.children || {}, printListIndexType(node));
     }
-    return "(any|null|undefined)[]|null|undefined";
+    return "null|undefined|ArrayLike<any|null|undefined>";
   }
 
   if (node.type === EXPRESSION.FUNCTION) {

@@ -43,6 +43,50 @@ function mergeNodeIntoTree(tree: AST_TREE, node: AST_NODE) {
   return tree;
 }
 
+// Given an N dimensional array value foo[][][][] insert into the parent
+// node correctly.
+function addSubArrayToListNode(
+  tree: AST_TREE,
+  node: AST_NODE,
+  rootExpression: string
+) {
+  let rootKey = rootExpression;
+  let depth = 0;
+  let nodeRef: AST_NODE | undefined;
+
+  while (rootKey.match(LIST_INDEX_TYPE_MATCHER_REGEX)) {
+    depth++;
+    rootKey = rootKey.match(LIST_INDEX_TYPE_MATCHER_REGEX)![1];
+  }
+
+  for (let i = 0; i < depth; ++i) {
+    if (nodeRef === undefined) {
+      nodeRef = tree[rootKey];
+    } else {
+      nodeRef = nodeRef.listIndexType!["[]"];
+    }
+  }
+
+  if (Object.keys(nodeRef!.listIndexType || {}).length) {
+    throw new Error(
+      `${rootExpression} expression already has a list index type and can not also have an array index type`
+    );
+  }
+
+  nodeRef!.listIndexType = {
+    "[]": {
+      expression: "[]",
+      type: EXPRESSION.LIST,
+      listIndexType: {}
+    }
+  };
+
+  for (const childKey of Object.keys(node.children || {})) {
+    const child = node.children![childKey];
+    mergeNodeIntoTree(nodeRef!.listIndexType!["[]"].listIndexType!, child);
+  }
+}
+
 function addListIndexType(tree: AST_TREE, node: AST_NODE) {
   const rootExpressionMatcher = node.expression.match(
     LIST_INDEX_TYPE_MATCHER_REGEX
@@ -55,6 +99,11 @@ function addListIndexType(tree: AST_TREE, node: AST_NODE) {
   }
 
   const rootExpression = rootExpressionMatcher[1];
+
+  if (rootExpression.match(LIST_INDEX_TYPE_MATCHER_REGEX)) {
+    addSubArrayToListNode(tree, node, rootExpression);
+    return;
+  }
 
   if (tree[rootExpression] === undefined) {
     tree[rootExpression] = {

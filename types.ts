@@ -3,9 +3,9 @@ export interface AliasMap {
 }
 
 export enum EXPRESSION {
-  VALUE = "value",
-  FUNCTION = "function",
-  LIST = "list"
+  VALUE,
+  FUNCTION,
+  LIST
 }
 
 export interface AST_NODE {
