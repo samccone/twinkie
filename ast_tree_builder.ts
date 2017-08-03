@@ -67,10 +67,12 @@ function addSubArrayToListNode(
     }
   }
 
-  if (Object.keys(nodeRef!.listIndexType || {}).length) {
-    throw new Error(
-      `${rootExpression} expression already has a list index type and can not also have an array index type`
-    );
+  if (nodeRef && Object.keys(nodeRef.listIndexType || {}).length) {
+    if (!nodeRef.listIndexType!["[]"]) {
+      throw new Error(
+        `${rootExpression} expression already has a list index type and can not also have an array index type Please file a bug!`
+      );
+    }
   }
 
   nodeRef!.listIndexType = {

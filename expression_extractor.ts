@@ -5,6 +5,7 @@ const HAS_POSTFIX_OBSERVER_REGEX = /^.*\.\*$/;
 const IS_STRING_PRIMITIVE_REGEX = /^".*"$|^'.*'$/;
 const IS_BOOL_PRMITIVE_REGEX = /^true$|^false$/;
 const NATIVE_BINDING_REGEX = /^(.*)::.*$/;
+const ARRAY_INDEX_ACCESS = /.*\[\]\.length$/;
 
 import { AliasMap } from "./types";
 import { isExpressionFunction, replaceFunctionArguments } from "./utils";
@@ -146,5 +147,7 @@ export function extractExpression(str: string, aliasMap: AliasMap) {
     ret = ret.filter(v => v !== "index");
   }
 
+  // Filter out calls like a[].length and a[][].length
+  ret = ret.filter(v => v.match(ARRAY_INDEX_ACCESS) == null);
   return ret;
 }

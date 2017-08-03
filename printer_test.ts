@@ -35,6 +35,53 @@ items: null|undefined|ArrayLike<any|null|undefined>;
 };`);
   });
 
+  it.only("handles complex aliasing and nested loops", () => {
+    expect(
+      printTree(
+        astTreeFromString(`
+            <table id="changeList">
+      <tr class=  "headerRow">
+        <th class="topHeader keyboard"></th>
+        <th class="topHeader star" hidden$="[[!showStar]]" hidden></th>
+        <th class="topHeader number" hidden$="[[!showNumber]]" hidden>#</th>
+        <template is="dom-repeat" items="[[changeTableColumns]]" as="item">
+          <th class$="[[_lowerCase(item)]] topHeader"
+              hidden$="[[isColumnHidden(item, visibleChangeTableColumns)]]">
+            [[item]]
+          </th>
+        </template>
+        <template is="dom-repeat" items="[[labelNames]]" as="labelName">
+          <th class="topHeader label" title$="[[labelName]]">
+            [[_computeLabelShortcut(labelName)]]
+          </th>
+        </template>
+      </tr>
+      <template is="dom-repeat" items="[[sections]]" as="changeSection"
+          index-as="sectionIndex">
+        <template is="dom-if" if="[[!changeSection.length]]"></template>
+        <template is="dom-repeat" items="[[changeSection]]" as="change">
+          <gr-change-list-item
+              assigned$="[[_computeItemAssigned(account, change)]]"></gr-change-list-item>
+        </template>
+      </template>
+    </table>
+    `)
+      )
+    ).to.deep.equal(`export interface View {
+showStar: any|null|undefined;
+showNumber: any|null|undefined;
+changeTableColumns: null|undefined|ArrayLike<any|null|undefined>;
+_lowerCase: (arg0: any|null|undefined) => any|null|undefined;
+isColumnHidden: (arg0: any|null|undefined, arg1: any|null|undefined) => any|null|undefined;
+visibleChangeTableColumns: any|null|undefined;
+labelNames: null|undefined|ArrayLike<any|null|undefined>;
+_computeLabelShortcut: (arg0: any|null|undefined) => any|null|undefined;
+sections: null|undefined|ArrayLike<null|undefined|ArrayLike<any|null|undefined>> & null|undefined|{};
+_computeItemAssigned: (arg0: any|null|undefined, arg1: any|null|undefined) => any|null|undefined;
+account: any|null|undefined;
+};`);
+  });
+
   it("handles multi-level dom-repeat aliasing", () => {
     expect(
       printTree(
