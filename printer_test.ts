@@ -35,7 +35,7 @@ items: null|undefined|ArrayLike<any|null|undefined>;
 };`);
   });
 
-  it.only("handles complex aliasing and nested loops", () => {
+  it("handles complex aliasing and nested loops", () => {
     expect(
       printTree(
         astTreeFromString(`
