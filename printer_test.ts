@@ -182,6 +182,18 @@ bob: null|undefined|{tap: any|null|undefined;};
 };`);
   });
 
+  it("handles a function on-* case", () => {
+    expect(
+      printTree(
+        astTreeFromString(`
+            <div on-z="wow">hi bobby</div>
+        `)
+      )
+    ).to.deep.equal(`export interface View {
+wow: (arg0: any|null|undefined) => any|null|undefined;
+};`);
+  });
+
   it("handles a simple case", () => {
     expect(
       printTree(

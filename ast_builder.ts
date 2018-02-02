@@ -14,6 +14,7 @@ import {
 } from "./utils";
 
 const FUNCTION_LIST_ACCESS_MATCHER = /(.*)\(\)\[\]$/;
+const ON_BINDING_ATTR_MATCHER = /^on\-.*$/;
 
 function expressionsToAstNodes(expressions: string[]) {
   return expressions.reduce((accum: AST_NODE[], expression) => {
@@ -197,7 +198,22 @@ export function getExpressionsForNode(
   );
 
   for (const attributeExpression of attributeExpressions) {
-    if (attributeExpression.attributeKey === "items" && nodeIsDomRepeat) {
+    if (ON_BINDING_ATTR_MATCHER.test(attributeExpression.attributeKey)) {
+      // TODO maybe we should validate that users are not using [[ ]] or {{ }}
+      // since it is invalid here.
+      const onNode = expressionToAstNodes(
+        `${attributeExpression.attributeValue}()`
+      );
+
+      if (onNode.length) {
+        // We know that the event handlers have 1 argument, so we should enforce it.
+        onNode[0].argumentCount = 1;
+        astNodes.push(onNode[0]);
+      }
+    } else if (
+      attributeExpression.attributeKey === "items" &&
+      nodeIsDomRepeat
+    ) {
       astNodes.push(
         ...getExpressionForDomRepeatItems(
           attributeExpression.attributeValue,

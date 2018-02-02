@@ -6,6 +6,21 @@ import {
 } from "./ast_builder";
 import { EXPRESSION } from "./types";
 
+describe("on-* expressions", () => {
+  it("simple", () => {
+    const node = Cheerio.parseHTML(`<p on-tap="zap"></p>`)[0];
+
+    expect(getExpressionsForNode(node, {})).to.deep.equal([
+      {
+        argumentCount: 1,
+        expression: "zap",
+        returnType: EXPRESSION.VALUE,
+        type: EXPRESSION.FUNCTION
+      }
+    ]);
+  });
+});
+
 describe("extracting an expression", () => {
   it("handles simple aliasing", () => {
     const node = Cheerio.parseHTML(`[[hey]]`)[0];
