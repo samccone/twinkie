@@ -261,7 +261,7 @@ describe("extracting an expression", () => {
         expression: "hey",
         type: EXPRESSION.FUNCTION,
         returnType: EXPRESSION.VALUE,
-        argumentCount: 3
+        argumentCount: 3,
       },
       {
         expression: "b",

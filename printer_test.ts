@@ -4,7 +4,7 @@ import { walkNodes } from "./dom_walker";
 import * as Cheerio from "cheerio";
 import { AliasMap, AST_NODE } from "./types";
 import { getExpressionsForNode } from "./ast_builder";
-import { printTree } from "./printer";
+import { printTree, printUse } from "./printer";
 
 function astTreeFromString(str: string) {
   const parsed = Cheerio.parseHTML(str);
@@ -19,6 +19,53 @@ function astTreeFromString(str: string) {
 
   return nodesToTree(nodes);
 }
+
+describe("print use", () => {
+  it("handles objects", () => {
+    expect(
+      printUse(
+        astTreeFromString(`
+        <p>[[b]]</p>
+        <p>[[b.c]]</p>
+        <p>[[b.c.d]]</p>
+        <p>[[a.d]]</p>
+        <p>[[a.f(1, 2, a.b)]]</p>
+    `), 'FooView'
+      ).trim()).to.deep.equal(
+        `const viewInstance = {} as FooView
+viewInstance.b!
+viewInstance.b!.c!
+viewInstance.b!.c!.d!
+viewInstance.a!
+viewInstance.a!.d!
+viewInstance.a!.f!(arg0 as any, arg1 as any, arg2 as any)
+viewInstance.a!.b!`.trim()
+      )
+  });
+
+  it("handles arrays", () => {
+    expect(
+      printUse(
+        astTreeFromString(`
+      <template is="dom-repeat" items="[[items]]" index-as="zap">
+        [[zap]]
+        [[item.wow]]
+        <template is="dom-repeat" items="[[item.foo]]">
+          [[item.amaze]]
+        </template>
+      </template>
+    `), 'FooView'
+      ).trim()
+    ).to.deep.equal(
+      `const viewInstance = {} as FooView
+viewInstance.items!.every
+viewInstance.items![0]!.wow!
+viewInstance.items![0]!.foo!.every
+viewInstance.items![0]!.foo![0]!.amaze!
+`.trim()
+    )  
+  });
+});
 
 describe("printing", () => {
   it("handles index-as aliasing", () => {
