@@ -38,7 +38,7 @@ viewInstance.b!.c!
 viewInstance.b!.c!.d!
 viewInstance.a!
 viewInstance.a!.d!
-viewInstance.a!.f!(arg0 as any, arg1 as any, arg2 as any)
+viewInstance.a!.f!(null!, null!, null!)
 viewInstance.a!.b!`.trim()
       )
   });
@@ -63,7 +63,7 @@ viewInstance.items![0]!.wow!
 viewInstance.items![0]!.foo!.every
 viewInstance.items![0]!.foo![0]!.amaze!
 `.trim()
-    )  
+    )
   });
 });
 

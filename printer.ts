@@ -51,18 +51,18 @@ function printNodeUse(node: AST_NODE, expressionPrefix = '') {
             ret += printNodeUse(node.children[childNodeExpression], `${expressionPrefix}${node.expression}!.`);
           }
         }
- 
+
         break;
       }
       case EXPRESSION.FUNCTION: {
         const argList = [];
         if (node.argumentCount) {
           for (let i = 0; i < node.argumentCount; i++) {
-            argList.push(`arg${i} as any`);
+            argList.push(`null!`);
           }
         }
         ret += `${expressionPrefix}${node.expression}!(${argList.join(', ')})\n`
- 
+
         break;
       }
     }
