@@ -43,6 +43,22 @@ viewInstance.a!.b!`.trim()
       )
   });
 
+  it("handles reading prop of list", () => {
+    expect(
+      printUse(
+        astTreeFromString(`
+      [[a.people.length]]
+      <template is="dom-repeat" items="[[a.people]]">[[item.name]]</template>
+    `), 'FooView').trim()
+    ).to.deep.equal(
+      `const viewInstance = {} as FooView
+viewInstance.a!
+viewInstance.a!.people!.every
+viewInstance.a!.people!.length!
+viewInstance.a!.people![0]!.name!`.trim()
+    );
+  });
+
   it("handles arrays", () => {
     expect(
       printUse(

@@ -33,7 +33,7 @@ function printNodeUse(node: AST_NODE, expressionPrefix = '') {
         ret += `${expressionPrefix}${node.expression}!.every\n`
         if (node.children) {
           for (const childNodeExpression of Object.keys(node.children)) {
-            ret += printNodeUse(node.children[childNodeExpression], `${expressionPrefix}${node.expression}![0]`);
+            ret += printNodeUse(node.children[childNodeExpression], `${expressionPrefix}${node.expression}!.`);
           }
         }
         if (node.listIndexType) {
