@@ -56,6 +56,28 @@ describe("ast tree building", () => {
       }
     });
   });
+  it("handles a iron-list as function with child", () => {
+    const nodes = stringToNodes(
+      `<iron-list items="[[wow()]]">[[item.zap]]</iron-list>`
+    );
+
+    expect(nodesToTree(nodes)).to.deep.equal({
+      wow: {
+        expression: "wow",
+        type: EXPRESSION.FUNCTION,
+        returnType: EXPRESSION.LIST,
+        argumentCount: 0,
+        children: {},
+        listIndexType: {
+          zap: {
+            children: {},
+            expression: "zap",
+            type: EXPRESSION.VALUE
+          }
+        }
+      }
+    });
+  });
 
   it("handles dom-repeat nodes", () => {
     const nodes = stringToNodes(`

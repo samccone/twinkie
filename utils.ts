@@ -5,7 +5,7 @@ export function isDomRepeat(node: CheerioElement) {
     node.tagName === "template" &&
     node.attribs["is"] === "dom-repeat" &&
     node.attribs["items"]
-  );
+  ) || (node.tagName === "iron-list" && node.attribs["items"]);
 }
 
 export function isExpressionFunction(expression: string) {
