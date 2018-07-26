@@ -17,13 +17,19 @@ export function printTree(tree: AST_TREE, interfaceName = "View") {
 }
 
 export function printUse(tree: AST_TREE, realType = "View") {
-  let ret = `const viewInstance = {} as ${realType}\n`;
+  const ret = [
+    `class ${realType}UseChecker extends ${realType} {\n`,
+    '  __useCheckerTestFunc() {\n',
+  ];
   for (const expressionKey of Object.keys(tree)) {
     const node = tree[expressionKey];
-    ret += printNodeUse(node, 'viewInstance.');
+    ret.push(printNodeUse(node, '    ;this.'));
   }
 
-  return ret;
+  ret.push(
+    '  }\n',
+    '}\n');
+  return ret.join('');
 }
 
 function printNodeUse(node: AST_NODE, expressionPrefix = '') {

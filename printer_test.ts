@@ -31,16 +31,19 @@ describe("print use", () => {
         <p>[[a.d]]</p>
         <p>[[a.f(1, 2, a.b)]]</p>
     `), 'FooView'
-      ).trim()).to.deep.equal(
-        `const viewInstance = {} as FooView
-viewInstance.b!
-viewInstance.b!.c!
-viewInstance.b!.c!.d!
-viewInstance.a!
-viewInstance.a!.d!
-viewInstance.a!.f!(null!, null!, null!)
-viewInstance.a!.b!`.trim()
-      );
+      ).trim()).to.deep.equal(`
+class FooViewUseChecker extends FooView {
+  __useCheckerTestFunc() {
+    ;this.b!
+    ;this.b!.c!
+    ;this.b!.c!.d!
+    ;this.a!
+    ;this.a!.d!
+    ;this.a!.f!(null!, null!, null!)
+    ;this.a!.b!
+  }
+}
+    `.trim());
   });
 
   it("handles reading prop of list", () => {
@@ -50,13 +53,16 @@ viewInstance.a!.b!`.trim()
       [[a.people.length]]
       <template is="dom-repeat" items="[[a.people]]">[[item.name]]</template>
     `), 'FooView').trim()
-    ).to.deep.equal(
-      `const viewInstance = {} as FooView
-viewInstance.a!
-viewInstance.a!.people!.every
-viewInstance.a!.people!.length!
-viewInstance.a!.people![0]!.name!`.trim()
-    );
+    ).to.deep.equal(`
+class FooViewUseChecker extends FooView {
+  __useCheckerTestFunc() {
+    ;this.a!
+    ;this.a!.people!.every
+    ;this.a!.people!.length!
+    ;this.a!.people![0]!.name!
+  }
+}
+    `.trim());
   });
 
   it("handles arrays", () => {
@@ -73,13 +79,16 @@ viewInstance.a!.people![0]!.name!`.trim()
     `), 'FooView'
       ).trim()
     ).to.deep.equal(
-      `const viewInstance = {} as FooView
-viewInstance.items!.every
-viewInstance.items![0]!.wow!
-viewInstance.items![0]!.foo!.every
-viewInstance.items![0]!.foo![0]!.amaze!
-`.trim()
-    );
+      `
+class FooViewUseChecker extends FooView {
+  __useCheckerTestFunc() {
+    ;this.items!.every
+    ;this.items![0]!.wow!
+    ;this.items![0]!.foo!.every
+    ;this.items![0]!.foo![0]!.amaze!
+  }
+}
+    `.trim());
   });
 });
 
