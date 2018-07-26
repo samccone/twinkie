@@ -1,6 +1,6 @@
 import { AST_NODE, AST_TREE, EXPRESSION } from "./types";
 
-export function printTree(tree: AST_TREE, interfaceName: string = "View") {
+export function printTree(tree: AST_TREE, interfaceName = "View") {
   let ret = "";
 
   ret += `export interface ${interfaceName} {\n`;
@@ -16,12 +16,12 @@ export function printTree(tree: AST_TREE, interfaceName: string = "View") {
   return ret;
 }
 
-export function printUse(tree: AST_TREE, realType: string = "View") {
+export function printUse(tree: AST_TREE, realType = "View") {
   let ret = `const viewInstance = {} as ${realType}\n`;
   for (const expressionKey of Object.keys(tree)) {
     const node = tree[expressionKey];
     ret += printNodeUse(node, 'viewInstance.');
-   }
+  }
 
   return ret;
 }
@@ -29,45 +29,45 @@ export function printUse(tree: AST_TREE, realType: string = "View") {
 function printNodeUse(node: AST_NODE, expressionPrefix = '') {
   let ret = '';
   switch (node.type) {
-      case EXPRESSION.LIST: {
-        ret += `${expressionPrefix}${node.expression}!.every\n`
-        if (node.children) {
-          for (const childNodeExpression of Object.keys(node.children)) {
-            ret += printNodeUse(node.children[childNodeExpression], `${expressionPrefix}${node.expression}!.`);
-          }
+    case EXPRESSION.LIST: {
+      ret += `${expressionPrefix}${node.expression}!.every\n`;
+      if (node.children) {
+        for (const childNodeExpression of Object.keys(node.children)) {
+          ret += printNodeUse(node.children[childNodeExpression], `${expressionPrefix}${node.expression}!.`);
         }
-        if (node.listIndexType) {
-          for (const listNodeExpression of Object.keys(node.listIndexType)) {
-            ret += printNodeUse(node.listIndexType[listNodeExpression], `${expressionPrefix}${node.expression}![0]!.`);
-          }
-        }
-
-        break;
       }
-      case EXPRESSION.VALUE: {
-        ret += `${expressionPrefix}${node.expression}!\n`
-        if (node.children) {
-          for (const childNodeExpression of Object.keys(node.children)) {
-            ret += printNodeUse(node.children[childNodeExpression], `${expressionPrefix}${node.expression}!.`);
-          }
+      if (node.listIndexType) {
+        for (const listNodeExpression of Object.keys(node.listIndexType)) {
+          ret += printNodeUse(node.listIndexType[listNodeExpression], `${expressionPrefix}${node.expression}![0]!.`);
         }
-
-        break;
       }
-      case EXPRESSION.FUNCTION: {
-        const argList = [];
-        if (node.argumentCount) {
-          for (let i = 0; i < node.argumentCount; i++) {
-            argList.push(`null!`);
-          }
-        }
-        ret += `${expressionPrefix}${node.expression}!(${argList.join(', ')})\n`
 
-        break;
-      }
+      break;
     }
+    case EXPRESSION.VALUE: {
+      ret += `${expressionPrefix}${node.expression}!\n`;
+      if (node.children) {
+        for (const childNodeExpression of Object.keys(node.children)) {
+          ret += printNodeUse(node.children[childNodeExpression], `${expressionPrefix}${node.expression}!.`);
+        }
+      }
 
-    return ret;
+      break;
+    }
+    case EXPRESSION.FUNCTION: {
+      const argList = [];
+      if (node.argumentCount) {
+        for (let i = 0; i < node.argumentCount; i++) {
+          argList.push(`null!`);
+        }
+      }
+      ret += `${expressionPrefix}${node.expression}!(${argList.join(', ')})\n`;
+
+      break;
+    }
+  }
+
+  return ret;
 }
 
 function printChildrenType(children: AST_TREE, arrayType?: string): string {

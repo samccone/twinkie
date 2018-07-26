@@ -40,7 +40,7 @@ viewInstance.a!
 viewInstance.a!.d!
 viewInstance.a!.f!(null!, null!, null!)
 viewInstance.a!.b!`.trim()
-      )
+      );
   });
 
   it("handles reading prop of list", () => {
@@ -79,7 +79,7 @@ viewInstance.items![0]!.wow!
 viewInstance.items![0]!.foo!.every
 viewInstance.items![0]!.foo![0]!.amaze!
 `.trim()
-    )
+    );
   });
 });
 
