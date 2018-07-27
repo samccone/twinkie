@@ -21,7 +21,7 @@
   },
   "name": "twinkie",
   "description": "Automatic template interfaces from polymer template files",
-  "version": "0.0.18",
+  "version": "0.0.19",
   "main": "index.js",
   "bin": "bin.js",
   "directories": {
