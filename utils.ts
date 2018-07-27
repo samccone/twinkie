@@ -2,10 +2,11 @@ const FUNCTION_MATCHER = /^(.*?)\((.*)\)$/;
 
 export function isDomRepeat(node: CheerioElement) {
   return (
-    node.tagName === "template" &&
-    node.attribs["is"] === "dom-repeat" &&
-    node.attribs["items"]
-  ) || (node.tagName === "iron-list" && node.attribs["items"]);
+    (node.tagName === "template" &&
+      node.attribs["is"] === "dom-repeat" &&
+      node.attribs["items"]) ||
+    (node.tagName === "iron-list" && node.attribs["items"])
+  );
 }
 
 export function isExpressionFunction(expression: string) {

@@ -30,8 +30,11 @@ describe("print use", () => {
         <p>[[b.c.d]]</p>
         <p>[[a.d]]</p>
         <p>[[a.f(1, 2, a.b)]]</p>
-    `), 'FooView'
-      ).trim()).to.deep.equal(`
+    `),
+        "FooView"
+      ).trim()
+    ).to.deep.equal(
+      `
 class FooViewUseChecker extends FooView {
   __useCheckerTestFunc() {
     ;this.b!
@@ -43,7 +46,8 @@ class FooViewUseChecker extends FooView {
     ;this.a!.b!
   }
 }
-    `.trim());
+    `.trim()
+    );
   });
 
   it("handles reading prop of list", () => {
@@ -52,8 +56,11 @@ class FooViewUseChecker extends FooView {
         astTreeFromString(`
       [[a.people.length]]
       <template is="dom-repeat" items="[[a.people]]">[[item.name]]</template>
-    `), 'FooView').trim()
-    ).to.deep.equal(`
+    `),
+        "FooView"
+      ).trim()
+    ).to.deep.equal(
+      `
 class FooViewUseChecker extends FooView {
   __useCheckerTestFunc() {
     ;this.a!
@@ -62,7 +69,8 @@ class FooViewUseChecker extends FooView {
     ;this.a!.people![0]!.name!
   }
 }
-    `.trim());
+    `.trim()
+    );
   });
 
   it("handles arrays", () => {
@@ -76,7 +84,8 @@ class FooViewUseChecker extends FooView {
           [[item.amaze]]
         </template>
       </template>
-    `), 'FooView'
+    `),
+        "FooView"
       ).trim()
     ).to.deep.equal(
       `
@@ -88,7 +97,8 @@ class FooViewUseChecker extends FooView {
     ;this.items![0]!.foo![0]!.amaze!
   }
 }
-    `.trim());
+    `.trim()
+    );
   });
 });
 

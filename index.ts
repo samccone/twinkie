@@ -6,7 +6,6 @@ import { getExpressionsForNode } from "./ast_builder";
 import { nodesToTree } from "./ast_tree_builder";
 import { printTree, printUse } from "./printer";
 
-
 function getTree(htmlPath: string) {
   const nodes: AST_NODE[] = [];
   const sample = fs.readFileSync(htmlPath, "utf-8");
@@ -26,7 +25,6 @@ export function generateInterface(
   htmlPath: string,
   interfaceName: string = "TemplateInterface"
 ) {
-
   return printTree(nodesToTree(getTree(htmlPath)), interfaceName);
 }
 
@@ -34,6 +32,5 @@ export function generateFauxUse(
   htmlPath: string,
   interfaceName: string = "TemplateInterface"
 ) {
-
   return printUse(nodesToTree(getTree(htmlPath)), interfaceName);
 }

@@ -1,6 +1,7 @@
 {
   "dependencies": {
-    "cheerio": "^1.0.0-rc.2"
+    "cheerio": "^1.0.0-rc.2",
+    "prettier": "^1.13.7"
   },
   "scripts": {
     "test": "mocha -r ts-node/register *_test.ts",

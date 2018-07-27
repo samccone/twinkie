@@ -19,32 +19,36 @@ export function printTree(tree: AST_TREE, interfaceName = "View") {
 export function printUse(tree: AST_TREE, realType = "View") {
   const ret = [
     `class ${realType}UseChecker extends ${realType} {\n`,
-    '  __useCheckerTestFunc() {\n',
+    "  __useCheckerTestFunc() {\n"
   ];
   for (const expressionKey of Object.keys(tree)) {
     const node = tree[expressionKey];
-    ret.push(printNodeUse(node, '    ;this.'));
+    ret.push(printNodeUse(node, "    ;this."));
   }
 
-  ret.push(
-    '  }\n',
-    '}\n');
-  return ret.join('');
+  ret.push("  }\n", "}\n");
+  return ret.join("");
 }
 
-function printNodeUse(node: AST_NODE, expressionPrefix = '') {
-  let ret = '';
+function printNodeUse(node: AST_NODE, expressionPrefix = "") {
+  let ret = "";
   switch (node.type) {
     case EXPRESSION.LIST: {
       ret += `${expressionPrefix}${node.expression}!.every\n`;
       if (node.children) {
         for (const childNodeExpression of Object.keys(node.children)) {
-          ret += printNodeUse(node.children[childNodeExpression], `${expressionPrefix}${node.expression}!.`);
+          ret += printNodeUse(
+            node.children[childNodeExpression],
+            `${expressionPrefix}${node.expression}!.`
+          );
         }
       }
       if (node.listIndexType) {
         for (const listNodeExpression of Object.keys(node.listIndexType)) {
-          ret += printNodeUse(node.listIndexType[listNodeExpression], `${expressionPrefix}${node.expression}![0]!.`);
+          ret += printNodeUse(
+            node.listIndexType[listNodeExpression],
+            `${expressionPrefix}${node.expression}![0]!.`
+          );
         }
       }
 
@@ -54,7 +58,10 @@ function printNodeUse(node: AST_NODE, expressionPrefix = '') {
       ret += `${expressionPrefix}${node.expression}!\n`;
       if (node.children) {
         for (const childNodeExpression of Object.keys(node.children)) {
-          ret += printNodeUse(node.children[childNodeExpression], `${expressionPrefix}${node.expression}!.`);
+          ret += printNodeUse(
+            node.children[childNodeExpression],
+            `${expressionPrefix}${node.expression}!.`
+          );
         }
       }
 
@@ -67,7 +74,7 @@ function printNodeUse(node: AST_NODE, expressionPrefix = '') {
           argList.push(`null!`);
         }
       }
-      ret += `${expressionPrefix}${node.expression}!(${argList.join(', ')})\n`;
+      ret += `${expressionPrefix}${node.expression}!(${argList.join(", ")})\n`;
 
       break;
     }
