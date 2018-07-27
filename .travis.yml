@@ -1,0 +1,11 @@
+sudo: false
+dist: trusty
+language: node_js
+
+script:
+  - yarn build
+  - yarn test
+  - yarn format-lint
+
+cache:
+  yarn: true

@@ -6,7 +6,9 @@
   "scripts": {
     "test": "mocha -r ts-node/register *_test.ts",
     "test-watch": "mocha -R spec -r ts-node/register *_test.ts --watch-extensions=ts -w",
-    "build": "tsc"
+    "build": "tsc",
+    "format": "prettier -w *.ts",
+    "format-lint": "prettier --list-different *.ts"
   },
   "devDependencies": {
     "@types/chai": "^4.0.1",
