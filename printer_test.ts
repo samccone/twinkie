@@ -21,6 +21,28 @@ function astTreeFromString(str: string) {
 }
 
 describe("print use", () => {
+  it("handles undefined check", () => {
+    expect(
+      printUse(
+        astTreeFromString(`
+        <p>[[a.f(1, 2, a.b)]]</p>
+    `),
+        "FooView",
+        true
+      ).trim()
+    ).to.deep.equal(
+      `
+class FooViewUseChecker extends FooView {
+  __useCheckerTestFunc() {
+    ;this.a!
+    ;this.a!.f!(undefined, undefined, undefined)
+    ;this.a!.b!
+  }
+}
+    `.trim()
+    );
+  });
+
   it("handles objects", () => {
     expect(
       printUse(

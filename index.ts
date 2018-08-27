@@ -30,7 +30,12 @@ export function generateInterface(
 
 export function generateFauxUse(
   htmlPath: string,
-  interfaceName: string = "TemplateInterface"
+  interfaceName: string = "TemplateInterface",
+  undefinedCheck: boolean = false
 ) {
-  return printUse(nodesToTree(getTree(htmlPath)), interfaceName);
+  return printUse(
+    nodesToTree(getTree(htmlPath)),
+    interfaceName,
+    undefinedCheck
+  );
 }
