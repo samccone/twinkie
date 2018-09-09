@@ -23,7 +23,7 @@ export function printUse(
 ) {
   const ret = [
     `class ${realType}UseChecker extends ${realType} {\n`,
-    "  __useCheckerTestFunc() {\n"
+    "  __useCheckerTestFunc() {\n",
   ];
   for (const expressionKey of Object.keys(tree)) {
     const node = tree[expressionKey];
@@ -34,7 +34,11 @@ export function printUse(
       expressionUses = getNodeUses(node, "null!");
     }
     for (const use of expressionUses) {
-      ret.push(`    this.${use};\n`);
+      if (use.type === undefined) {
+        ret.push(`    this.${use.expression};\n`);
+      } else {
+        ret.push(`    {const _: ${use.type} = this.${use.expression};}\n`);
+      }
     }
   }
 
@@ -42,17 +46,22 @@ export function printUse(
   return ret.join("");
 }
 
+type NodeUse = {expression: string, type: string|undefined};
+
 function *getNodeUses(
-    node: AST_NODE, argValue: string):IterableIterator<string> {
+    node: AST_NODE, argValue: string):IterableIterator<NodeUse> {
   switch (node.type) {
     case EXPRESSION.LIST: {
-      yield `${node.expression}!.every`;
+      yield {expression: `${node.expression}!`, type: `Array<any>`};
       if (node.children) {
         for (const childNodeExpression of Object.keys(node.children)) {
           const innerUses =
               getNodeUses(node.children[childNodeExpression], argValue);
           for (const innerUse of innerUses) {
-            yield `${node.expression}!.${innerUse}`;
+            yield {
+              expression: `${node.expression}!.${innerUse.expression}`,
+              type: innerUse.type,
+            };
           }
         }
       }
@@ -61,7 +70,10 @@ function *getNodeUses(
           const innerUses =
               getNodeUses(node.listIndexType[listNodeExpression], argValue);
           for (const innerUse of innerUses) {
-            yield `${node.expression}![0]!.${innerUse}`
+            yield {
+              expression: `${node.expression}![0]!.${innerUse.expression}`,
+              type: innerUse.type,
+            }
           }
         }
       }
@@ -69,13 +81,16 @@ function *getNodeUses(
       break;
     }
     case EXPRESSION.VALUE: {
-      yield `${node.expression}`;
+      yield {expression: `${node.expression}`, type: undefined};
       if (node.children) {
         for (const childNodeExpression of Object.keys(node.children)) {
           const childUses =
               getNodeUses(node.children[childNodeExpression], argValue);
           for (const childUse of childUses) {
-            yield `${node.expression}!.${childUse}`;
+            yield {
+              expression: `${node.expression}!.${childUse.expression}`,
+              type: childUse.type,
+            };
           }
         }
       }
@@ -89,7 +104,10 @@ function *getNodeUses(
           argList.push(argValue);
         }
       }
-      yield `${node.expression}!(${argList.join(", ")})`;
+      yield {
+        expression: `${node.expression}!(${argList.join(", ")})`,
+        type: undefined,
+      };
 
       break;
     }

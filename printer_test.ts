@@ -86,7 +86,7 @@ class FooViewUseChecker extends FooView {
 class FooViewUseChecker extends FooView {
   __useCheckerTestFunc() {
     this.a;
-    this.a!.people!.every;
+    {const _: Array<any> = this.a!.people!;}
     this.a!.people!.length;
     this.a!.people![0]!.name;
   }
@@ -113,9 +113,9 @@ class FooViewUseChecker extends FooView {
       `
 class FooViewUseChecker extends FooView {
   __useCheckerTestFunc() {
-    this.items!.every;
+    {const _: Array<any> = this.items!;}
     this.items![0]!.wow;
-    this.items![0]!.foo!.every;
+    {const _: Array<any> = this.items![0]!.foo!;}
     this.items![0]!.foo![0]!.amaze;
   }
 }
@@ -435,3 +435,6 @@ foo: null|undefined|ArrayLike<null|undefined|{zap: any|null|undefined; tap: any|
 };`);
   });
 });
+
+
+('foo' as string).every;
