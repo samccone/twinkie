@@ -5,7 +5,7 @@ import {
   removePrimitiveExpressions,
   removeObserverPostfixes
 } from "./expression_extractor";
-import { AliasMap, AST_NODE, EXPRESSION } from "./types";
+import { AliasMap, AST_NODE, EXPRESSION, MAIN_AST_NODE_TYPE } from "./types";
 import {
   isExpressionFunction,
   getFunctionArguments,
@@ -66,7 +66,7 @@ export function splitExpressionOnOuterPeriods(expression: string) {
 
 export function functionExpressionToAstNodes(
   expression: string,
-  knownType: EXPRESSION = EXPRESSION.VALUE
+  knownType: MAIN_AST_NODE_TYPE = EXPRESSION.VALUE
 ) {
   const expressions = [];
   const functionName = getFunctionName(expression);
@@ -83,7 +83,7 @@ export function functionExpressionToAstNodes(
     } else {
       expressions.push({
         expression: functionName,
-        type: EXPRESSION.FUNCTION,
+        type: EXPRESSION.FUNCTION as EXPRESSION.FUNCTION,
         argumentCount: functionArguments.length,
         returnType: knownType
       });
@@ -101,7 +101,7 @@ export function functionExpressionToAstNodes(
 
 function dotExpressionToNestedExpression(
   expression: string,
-  knownType: EXPRESSION = EXPRESSION.VALUE,
+  knownType: MAIN_AST_NODE_TYPE = EXPRESSION.VALUE,
   opts?: { argumentCount?: number; returnType?: EXPRESSION }
 ) {
   const additionalNodes: AST_NODE[] = [];
@@ -140,7 +140,7 @@ function dotExpressionToNestedExpression(
 
 function expressionToAstNodes(
   expression: string,
-  knownType: EXPRESSION = EXPRESSION.VALUE
+  knownType: MAIN_AST_NODE_TYPE = EXPRESSION.VALUE
 ): AST_NODE[] {
   const expressions: AST_NODE[] = [];
 
@@ -220,12 +220,24 @@ export function getExpressionsForNode(
           aliasMap
         )
       );
-    } else {
+    } else if (attributeExpression.attributeKey.endsWith('$')) {
       astNodes.push(
         ...expressionsToAstNodes(
           extractExpression(attributeExpression.attributeValue, aliasMap)
         )
       );
+    } else if (node.type === 'tag' && node.name) {
+      const expressions = expressionsToAstNodes(
+        extractExpression(attributeExpression.attributeValue, aliasMap));
+      for (const expression of expressions) {
+        astNodes.push({
+          type: EXPRESSION.PROPERTY_ASSIGNMENT,
+          expression: expression.expression,
+          rightHandSide: expression,
+          tagName: node.name,
+          propertyName: attributeExpression.attributeKey
+        });
+      }
     }
   }
 

@@ -34,6 +34,15 @@ export function printUse(
       expressionUses = getNodeUses(node, "null!");
     }
     for (const use of expressionUses) {
+      if (use.propertyName && use.tagName) {
+        const varName = `${kebabCaseToCamelCase(use.tagName)}Elem`;
+        ret.push(
+          `    {\n` +
+          `      const ${varName}: ElementTagNameMap['${use.tagName}'] = null!;\n` +
+          `      ${varName}.${use.propertyName} = this.${use.expression};\n` +
+          `    }\n`
+        );
+      }
       if (use.type === undefined) {
         ret.push(`    this.${use.expression};\n`);
       } else {
@@ -46,7 +55,12 @@ export function printUse(
   return ret.join("");
 }
 
-type NodeUse = {expression: string, type: string|undefined};
+type NodeUse = {
+  expression: string,
+  type: string|undefined,
+  tagName?: string,
+  propertyName?: string,
+};
 
 function *getNodeUses(
     node: AST_NODE, argValue: string):IterableIterator<NodeUse> {
@@ -110,6 +124,18 @@ function *getNodeUses(
       };
 
       break;
+    }
+    case EXPRESSION.PROPERTY_ASSIGNMENT: {
+      const exprs = [...getNodeUses(node.rightHandSide, argValue)];
+      if (exprs.length > 0) {
+        yield {
+          expression: exprs[exprs.length - 1].expression,
+          type: undefined,
+          tagName: node.tagName,
+          propertyName:
+            kebabCaseToCamelCase(node.propertyName)
+        };
+      }
     }
   }
 }
@@ -213,4 +239,8 @@ function printExpressionType(node: AST_NODE) {
   }
 
   return "any|null|undefined";
+}
+
+function kebabCaseToCamelCase(kebab: string): string {
+  return kebab.replace(/-(.)/g, (_, c) => c.toUpperCase());
 }

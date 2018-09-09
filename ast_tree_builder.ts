@@ -1,4 +1,4 @@
-import { AST_NODE, AST_TREE, EXPRESSION } from "./types";
+import { AST_NODE, AST_TREE, EXPRESSION, MAIN_AST_NODE_TYPE } from "./types";
 
 const LIST_INDEX_TYPE_MATCHER_REGEX = /(.*)\[\]$/;
 
@@ -36,7 +36,7 @@ function mergeNodeIntoTree(tree: AST_TREE, node: AST_NODE) {
   // Allow a node to go from VALUE type to a "more refined" type.
   if (node.type !== existingNode.type) {
     if (existingNode.type === EXPRESSION.VALUE) {
-      existingNode.type = node.type;
+      existingNode.type = node.type as MAIN_AST_NODE_TYPE;
     }
   }
 

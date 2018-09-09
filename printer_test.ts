@@ -122,6 +122,36 @@ class FooViewUseChecker extends FooView {
     `.trim()
     );
   });
+
+  it("handles binding to custom element properties", () => {
+    expect(
+      printUse(
+        astTreeFromString(`
+      <foo-bar baz="{{qux.zot}}" zim={{loot.vo}} attr$="{{kapow}}">
+      </foo-bar>
+    `),
+        "FooView"
+      ).trim()
+    ).to.deep.equal(
+      `
+class FooViewUseChecker extends FooView {
+  __useCheckerTestFunc() {
+    {
+      const fooBarElem: ElementTagNameMap['foo-bar'] = null!;
+      fooBarElem.baz = this.qux!.zot;
+    }
+    this.qux!.zot;
+    {
+      const fooBarElem: ElementTagNameMap['foo-bar'] = null!;
+      fooBarElem.zim = this.loot!.vo;
+    }
+    this.loot!.vo;
+    this.kapow;
+  }
+}
+    `.trim()
+    );
+  })
 });
 
 describe("printing", () => {
@@ -435,6 +465,3 @@ foo: null|undefined|ArrayLike<null|undefined|{zap: any|null|undefined; tap: any|
 };`);
   });
 });
-
-
-('foo' as string).every;
