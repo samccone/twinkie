@@ -332,6 +332,9 @@ function *getNodeUses(
       break;
     }
     case EXPRESSION.PROPERTY_ASSIGNMENT: {
+      if (!node.rightHandSide) {
+        return;
+      }
       const exprs = [...getNodeUses(node.rightHandSide, argValue)];
       if (exprs.length > 0) {
         yield {
@@ -342,6 +345,7 @@ function *getNodeUses(
             kebabCaseToCamelCase(node.propertyName)
         };
       }
+      break;
     }
   }
 }

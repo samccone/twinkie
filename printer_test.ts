@@ -337,6 +337,7 @@ class FooViewUseChecker extends FooView {
       </foo-bar>
       <template zot="{{clump()}}"></template>
       <template is="dom-if" if="{{good}}"></template>
+      <foo-bar blip="bip-{{zim}}-zop"></foo-bar>
     `),
         "FooView"
       ).trim()
@@ -365,6 +366,7 @@ class FooViewUseChecker extends FooView {
       domIfElem.if = this.good;
     }
     this.good;
+    this.zim;
   }
 }
     `.trim()

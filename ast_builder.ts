@@ -204,7 +204,7 @@
  *    limitations under the License.
  */
 
-import { extractNodeAttributes, extractNodeContents } from "./dom_walker";
+import { extractNodeAttributes, extractNodeContents, AttributeExpression } from "./dom_walker";
 import {
   extractExpression,
   stripNegationPrefixes,
@@ -426,23 +426,18 @@ export function getExpressionsForNode(
           aliasMap
         )
       );
-    } else if (attributeExpression.attributeKey.endsWith('$')) {
-      astNodes.push(
-        ...expressionsToAstNodes(
-          extractExpression(attributeExpression.attributeValue, aliasMap)
-        )
-      );
-    } else if (node.type === 'tag' && node.name) {
+    } else if (writesToProperty(attributeExpression) &&
+               node.type === 'tag' && node.name) {
       const expressions = expressionsToAstNodes(
         extractExpression(attributeExpression.attributeValue, aliasMap));
       let tagName = node.name;
       const isAttribute =
           attributeExpressions.find((ae) => ae.attributeKey === 'is');
-      if (isAttribute) {
+      if (isAttribute != null) {
         tagName = isAttribute.attributeValue;
       }
       for (const expression of expressions) {
-        if (!expression || expression.type == null) {
+        if (expression == null) {
           continue;
         }
         astNodes.push({
@@ -453,10 +448,38 @@ export function getExpressionsForNode(
           propertyName: attributeExpression.attributeKey
         });
       }
+     } else {
+      astNodes.push(
+        ...expressionsToAstNodes(
+          extractExpression(attributeExpression.attributeValue, aliasMap)
+        )
+      );
     }
   }
 
   astNodes.push(...expressionsToAstNodes(contentExpressions));
 
   return astNodes;
+}
+
+/**
+ * Returns true if the attribute expression will write to a property on the
+ * element, rather than to the attribute.
+ *
+ * i.e. if it will do:
+ *    fooElem.leftHandSide = resultOfBindingExpression
+ * rather than
+ *    fooElem.setAttribute('left-hand-side', resultOfBindingExpression);
+ */
+function writesToProperty(attributeExpression: AttributeExpression) {
+  if (attributeExpression.attributeKey.endsWith('$')) {
+    return false;
+  }
+  const value = attributeExpression.attributeValue;
+  if (/^\s*\{\{.*\}\}\s*$/.test(value) || /^\s*\{\{.*\}\}\s*$/.test(value)) {
+    // foo="{{bar}}" writes to the property
+    // foo="fizz-{{bar}}-baz" writes to the attribute
+    return true;
+  }
+  return false;
 }

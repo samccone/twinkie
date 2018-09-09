@@ -209,7 +209,11 @@ import { isDomRepeat, isExpressionFunction, getFunctionName } from "./utils";
 import { extractExpression } from "./expression_extractor";
 const BLACKLISTED_TAGS = new Set(["style", "script"]);
 
-export function extractNodeAttributes(node: CheerioElement) {
+export interface AttributeExpression {
+  attributeKey: string;
+  attributeValue: string;
+}
+export function extractNodeAttributes(node: CheerioElement): AttributeExpression[] {
   const ret = [];
   for (const attrKey of Object.keys(node.attribs || {})) {
     ret.push({
