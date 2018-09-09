@@ -34,9 +34,9 @@ describe("print use", () => {
       `
 class FooViewUseChecker extends FooView {
   __useCheckerTestFunc() {
-    ;this.a!
-    ;this.a!.f!(undefined, undefined, undefined)
-    ;this.a!.b!
+    this.a;
+    this.a!.f!(undefined, undefined, undefined);
+    this.a!.b;
   }
 }
     `.trim()
@@ -59,13 +59,13 @@ class FooViewUseChecker extends FooView {
       `
 class FooViewUseChecker extends FooView {
   __useCheckerTestFunc() {
-    ;this.b!
-    ;this.b!.c!
-    ;this.b!.c!.d!
-    ;this.a!
-    ;this.a!.d!
-    ;this.a!.f!(null!, null!, null!)
-    ;this.a!.b!
+    this.b;
+    this.b!.c;
+    this.b!.c!.d;
+    this.a;
+    this.a!.d;
+    this.a!.f!(null!, null!, null!);
+    this.a!.b;
   }
 }
     `.trim()
@@ -85,10 +85,10 @@ class FooViewUseChecker extends FooView {
       `
 class FooViewUseChecker extends FooView {
   __useCheckerTestFunc() {
-    ;this.a!
-    ;this.a!.people!.every
-    ;this.a!.people!.length!
-    ;this.a!.people![0]!.name!
+    this.a;
+    this.a!.people!.every;
+    this.a!.people!.length;
+    this.a!.people![0]!.name;
   }
 }
     `.trim()
@@ -113,10 +113,10 @@ class FooViewUseChecker extends FooView {
       `
 class FooViewUseChecker extends FooView {
   __useCheckerTestFunc() {
-    ;this.items!.every
-    ;this.items![0]!.wow!
-    ;this.items![0]!.foo!.every
-    ;this.items![0]!.foo![0]!.amaze!
+    this.items!.every;
+    this.items![0]!.wow;
+    this.items![0]!.foo!.every;
+    this.items![0]!.foo![0]!.amaze;
   }
 }
     `.trim()
