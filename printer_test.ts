@@ -335,6 +335,8 @@ class FooViewUseChecker extends FooView {
         astTreeFromString(`
       <foo-bar baz="{{qux.zot}}" zim={{loot.vo}} attr$="{{kapow}}">
       </foo-bar>
+      <template zot="{{clump()}}"></template>
+      <template is="dom-if" if="{{good}}"></template>
     `),
         "FooView"
       ).trim()
@@ -353,6 +355,16 @@ class FooViewUseChecker extends FooView {
     }
     this.loot!.vo;
     this.kapow;
+    {
+      const templateElem: ElementTagNameMap['template'] = null!;
+      templateElem.zot = this.clump!();
+    }
+    this.clump!();
+    {
+      const domIfElem: ElementTagNameMap['dom-if'] = null!;
+      domIfElem.if = this.good;
+    }
+    this.good;
   }
 }
     `.trim()

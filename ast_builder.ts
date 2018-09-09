@@ -435,6 +435,12 @@ export function getExpressionsForNode(
     } else if (node.type === 'tag' && node.name) {
       const expressions = expressionsToAstNodes(
         extractExpression(attributeExpression.attributeValue, aliasMap));
+      let tagName = node.name;
+      const isAttribute =
+          attributeExpressions.find((ae) => ae.attributeKey === 'is');
+      if (isAttribute) {
+        tagName = isAttribute.attributeValue;
+      }
       for (const expression of expressions) {
         if (!expression || expression.type == null) {
           continue;
@@ -443,7 +449,7 @@ export function getExpressionsForNode(
           type: EXPRESSION.PROPERTY_ASSIGNMENT,
           expression: expression.expression,
           rightHandSide: expression,
-          tagName: node.name,
+          tagName: tagName,
           propertyName: attributeExpression.attributeKey
         });
       }
