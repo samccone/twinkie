@@ -211,12 +211,18 @@ const generateFauxUse = require('.').generateFauxUse;
 const args = process.argv.slice(2);
 
 if (args.indexOf('--print-use') != -1) {
-    let undefinedCheck = false;
+    let config = {
+        undefinedCheck: false,
+        typeCheckPropertyBindings: false
+    };
     if (args.indexOf('--undefined-check') != -1) {
-        undefinedCheck = true;
+        config.undefinedCheck = true;
+    }
+    if (args.indexOf('--check-property-bindings') != -1) {
+        config.typeCheckPropertyBindings = true;
     }
 
-    console.log(generateFauxUse(args[0], args[1], undefinedCheck));
+    console.log(generateFauxUse(args[0], args[1], config));
 } else {
     console.log(generateInterface(args[0]));
 }

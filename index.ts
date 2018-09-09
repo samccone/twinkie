@@ -212,6 +212,11 @@ import { getExpressionsForNode } from "./ast_builder";
 import { nodesToTree } from "./ast_tree_builder";
 import { printTree, printUse } from "./printer";
 
+export interface Config {
+  undefinedCheck?: boolean;
+  typeCheckPropertyBindings?: boolean;
+}
+
 function getTree(htmlPath: string) {
   const nodes: AST_NODE[] = [];
   const sample = fs.readFileSync(htmlPath, "utf-8");
@@ -237,11 +242,11 @@ export function generateInterface(
 export function generateFauxUse(
   htmlPath: string,
   interfaceName: string = "TemplateInterface",
-  undefinedCheck: boolean = false
+  config: Config,
 ) {
   return printUse(
     nodesToTree(getTree(htmlPath)),
     interfaceName,
-    undefinedCheck
+    config
   );
 }

@@ -205,6 +205,7 @@
  */
 
 import { AST_NODE, AST_TREE, EXPRESSION } from "./types";
+import { Config } from ".";
 
 export function printTree(tree: AST_TREE, interfaceName = "View") {
   let ret = "";
@@ -225,7 +226,7 @@ export function printTree(tree: AST_TREE, interfaceName = "View") {
 export function printUse(
   tree: AST_TREE,
   realType: string,
-  undefinedCheck = false
+  config: Config={},
 ) {
   const ret = [
     `class ${realType}UseChecker extends ${realType} {\n`,
@@ -234,13 +235,13 @@ export function printUse(
   for (const expressionKey of Object.keys(tree)) {
     const node = tree[expressionKey];
     let expressionUses;
-    if (undefinedCheck) {
+    if (config.undefinedCheck) {
       expressionUses = getNodeUses(node, "undefined");
     } else {
       expressionUses = getNodeUses(node, "null!");
     }
     for (const use of expressionUses) {
-      if (use.propertyName && use.tagName) {
+      if (config.typeCheckPropertyBindings && use.propertyName && use.tagName) {
         const varName = `${kebabCaseToCamelCase(use.tagName)}Elem`;
         ret.push(
           `    {\n` +

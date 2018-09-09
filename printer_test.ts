@@ -234,7 +234,7 @@ describe("print use", () => {
         <p>[[a.f(1, 2, a.b)]]</p>
     `),
         "FooView",
-        true
+        {undefinedCheck: true}
       ).trim()
     ).to.deep.equal(
       `
@@ -339,7 +339,8 @@ class FooViewUseChecker extends FooView {
       <template is="dom-if" if="{{good}}"></template>
       <foo-bar blip="bip-{{zim}}-zop"></foo-bar>
     `),
-        "FooView"
+        "FooView",
+        {typeCheckPropertyBindings: true}
       ).trim()
     ).to.deep.equal(
       `
@@ -365,6 +366,35 @@ class FooViewUseChecker extends FooView {
       const domIfElem: ElementTagNameMap['dom-if'] = null!;
       domIfElem.if = this.good;
     }
+    this.good;
+    this.zim;
+  }
+}
+    `.trim()
+    );
+  })
+
+  it("handles binding to custom element properties", () => {
+    expect(
+      printUse(
+        astTreeFromString(`
+      <foo-bar baz="{{qux.zot}}" zim={{loot.vo}} attr$="{{kapow}}">
+      </foo-bar>
+      <template zot="{{clump()}}"></template>
+      <template is="dom-if" if="{{good}}"></template>
+      <foo-bar blip="bip-{{zim}}-zop"></foo-bar>
+    `),
+        "FooView",
+        {typeCheckPropertyBindings: false}
+      ).trim()
+    ).to.deep.equal(
+      `
+class FooViewUseChecker extends FooView {
+  __useCheckerTestFunc() {
+    this.qux!.zot;
+    this.loot!.vo;
+    this.kapow;
+    this.clump!();
     this.good;
     this.zim;
   }
