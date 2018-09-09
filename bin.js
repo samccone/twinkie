@@ -1,4 +1,5 @@
 #!/usr/bin/env node
+// @ts-check
 const generateInterface = require('.').generateInterface;
 const generateFauxUse = require('.').generateFauxUse;
 const args = process.argv.slice(2);

@@ -17,7 +17,7 @@
     "mocha": "^3.4.2",
     "prettier": "^1.13.7",
     "ts-node": "^4.1.0",
-    "typescript": "^2.7.1"
+    "typescript": "^2.9.2"
   },
   "name": "twinkie",
   "description": "Automatic template interfaces from polymer template files",

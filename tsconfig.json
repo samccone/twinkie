@@ -8,6 +8,7 @@
     "strictNullChecks": true,
     "noImplicitReturns": true,
     "noUnusedLocals": true,
+    "strict": true,
     "lib": ["es2017"]
   },
   "exclude": ["node_modules"],
