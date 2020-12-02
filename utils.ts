@@ -208,10 +208,10 @@ const FUNCTION_MATCHER = /^(.*?)\((.*)\)$/;
 
 export function isDomRepeat(node: CheerioElement) {
   return (
-    (node.tagName === "template" &&
-      node.attribs["is"] === "dom-repeat" &&
-      node.attribs["items"]) ||
-    (node.tagName === "iron-list" && node.attribs["items"])
+    (node.tagName === 'template' &&
+      node.attribs['is'] === 'dom-repeat' &&
+      node.attribs['items']) ||
+    (node.tagName === 'iron-list' && node.attribs['items'])
   );
 }
 
@@ -223,7 +223,7 @@ export function getFunctionArguments(functionExpression: string) {
   const match = functionExpression.match(FUNCTION_MATCHER);
 
   if (match && match[2].length) {
-    return match[2].split(",").map(v => v.trim());
+    return match[2].split(',').map(v => v.trim());
   }
 
   return [];
@@ -236,7 +236,7 @@ export function replaceFunctionArguments(
   const functionName = functionExpression.match(FUNCTION_MATCHER)![1];
   const functionArgs = getFunctionArguments(functionExpression);
 
-  return `${functionName}(${functionArgs.map(arg => mapper(arg)).join(",")})`;
+  return `${functionName}(${functionArgs.map(arg => mapper(arg)).join(',')})`;
 }
 
 export function getFunctionName(functionExpression: string) {

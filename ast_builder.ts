@@ -204,20 +204,24 @@
  *    limitations under the License.
  */
 
-import { extractNodeAttributes, extractNodeContents, AttributeExpression } from "./dom_walker";
+import {
+  extractNodeAttributes,
+  extractNodeContents,
+  AttributeExpression,
+} from './dom_walker';
 import {
   extractExpression,
   stripNegationPrefixes,
   removePrimitiveExpressions,
-  removeObserverPostfixes
-} from "./expression_extractor";
-import { AliasMap, AST_NODE, EXPRESSION, MAIN_AST_NODE_TYPE } from "./types";
+  removeObserverPostfixes,
+} from './expression_extractor';
+import {AliasMap, AST_NODE, EXPRESSION, MAIN_AST_NODE_TYPE} from './types';
 import {
   isExpressionFunction,
   getFunctionArguments,
   getFunctionName,
-  isDomRepeat
-} from "./utils";
+  isDomRepeat,
+} from './utils';
 
 const FUNCTION_LIST_ACCESS_MATCHER = /(.*)\(\)\[\]$/;
 const ON_BINDING_ATTR_MATCHER = /^on-.*$/;
@@ -236,23 +240,23 @@ function expressionsToAstNodes(expressions: string[]) {
  * [a, b(c.z), g]
  */
 export function splitExpressionOnOuterPeriods(expression: string) {
-  let accum = "";
+  let accum = '';
   const ret: string[] = [];
   let parenLevel = 0;
 
-  for (const char of expression.split("")) {
-    if (char === "(") {
+  for (const char of expression.split('')) {
+    if (char === '(') {
       parenLevel++;
     }
 
-    if (char === ")") {
+    if (char === ')') {
       parenLevel--;
     }
 
-    if (char === "." && parenLevel === 0) {
+    if (char === '.' && parenLevel === 0) {
       if (accum.length) {
         ret.push(accum);
-        accum = "";
+        accum = '';
       }
     } else {
       accum += char;
@@ -279,11 +283,11 @@ export function functionExpressionToAstNodes(
   const functionArguments = getFunctionArguments(expression);
 
   if (functionName) {
-    if (functionName.indexOf(".") !== -1) {
+    if (functionName.indexOf('.') !== -1) {
       expressions.push(
         ...dotExpressionToNestedExpression(functionName, EXPRESSION.FUNCTION, {
           argumentCount: functionArguments.length,
-          returnType: knownType
+          returnType: knownType,
         })
       );
     } else {
@@ -291,7 +295,7 @@ export function functionExpressionToAstNodes(
         expression: functionName,
         type: EXPRESSION.FUNCTION as EXPRESSION.FUNCTION,
         argumentCount: functionArguments.length,
-        returnType: knownType
+        returnType: knownType,
       });
     }
   }
@@ -308,7 +312,7 @@ export function functionExpressionToAstNodes(
 function dotExpressionToNestedExpression(
   expression: string,
   knownType: MAIN_AST_NODE_TYPE = EXPRESSION.VALUE,
-  opts?: { argumentCount?: number; returnType?: EXPRESSION }
+  opts?: {argumentCount?: number; returnType?: EXPRESSION}
 ) {
   const additionalNodes: AST_NODE[] = [];
   const rootExpressionString = splitExpressionOnOuterPeriods(expression)[0];
@@ -323,7 +327,7 @@ function dotExpressionToNestedExpression(
     .reduce((prev, curr) => {
       const currentExpressions = expressionToAstNodes(curr);
       prev.children![currentExpressions[0].expression] = Object.assign(
-        { children: {} },
+        {children: {}},
         currentExpressions[0]
       );
       additionalNodes.push(...currentExpressions.slice(1));
@@ -353,7 +357,7 @@ function expressionToAstNodes(
   if (isExpressionFunction(expression)) {
     expressions.push(...functionExpressionToAstNodes(expression, knownType));
   } else if (expression.match(FUNCTION_LIST_ACCESS_MATCHER)) {
-    let rootExpression = expression.match(FUNCTION_LIST_ACCESS_MATCHER)![1];
+    const rootExpression = expression.match(FUNCTION_LIST_ACCESS_MATCHER)![1];
     return expressionToAstNodes(`${rootExpression}[]`);
   } else {
     if (expressionHasChildExpressions(expression)) {
@@ -363,7 +367,7 @@ function expressionToAstNodes(
     } else {
       expressions.push({
         expression,
-        type: knownType
+        type: knownType,
       });
     }
   }
@@ -383,7 +387,7 @@ function getExpressionForDomRepeatItems(
 
   if (domRepeatItemsExpressions.length > 1) {
     throw Error(
-      "Multiple expressions found inside of dom-repeat items attribute."
+      'Multiple expressions found inside of dom-repeat items attribute.'
     );
   }
 
@@ -399,7 +403,7 @@ export function getExpressionsForNode(
   const astNodes: AST_NODE[] = [];
   const attributeExpressions = extractNodeAttributes(node);
   const contentExpressions = extractExpression(
-    extractNodeContents(node) || "",
+    extractNodeContents(node) || '',
     aliasMap
   );
 
@@ -417,7 +421,7 @@ export function getExpressionsForNode(
         astNodes.push(onNode[0]);
       }
     } else if (
-      attributeExpression.attributeKey === "items" &&
+      attributeExpression.attributeKey === 'items' &&
       nodeIsDomRepeat
     ) {
       astNodes.push(
@@ -426,13 +430,18 @@ export function getExpressionsForNode(
           aliasMap
         )
       );
-    } else if (writesToProperty(attributeExpression) &&
-               node.type === 'tag' && node.name) {
+    } else if (
+      writesToProperty(attributeExpression) &&
+      node.type === 'tag' &&
+      node.name
+    ) {
       const expressions = expressionsToAstNodes(
-        extractExpression(attributeExpression.attributeValue, aliasMap));
+        extractExpression(attributeExpression.attributeValue, aliasMap)
+      );
       let tagName = node.name;
-      const isAttribute =
-          attributeExpressions.find((ae) => ae.attributeKey === 'is');
+      const isAttribute = attributeExpressions.find(
+        ae => ae.attributeKey === 'is'
+      );
       if (isAttribute) {
         tagName = isAttribute.attributeValue;
       }
@@ -445,10 +454,10 @@ export function getExpressionsForNode(
           expression: expression.expression,
           rightHandSide: expression,
           tagName: tagName,
-          propertyName: attributeExpression.attributeKey
+          propertyName: attributeExpression.attributeKey,
         });
       }
-     } else {
+    } else {
       astNodes.push(
         ...expressionsToAstNodes(
           extractExpression(attributeExpression.attributeValue, aliasMap)

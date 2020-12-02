@@ -204,11 +204,11 @@
  *    limitations under the License.
  */
 
-import { AST_NODE, AST_TREE, EXPRESSION } from "./types";
-import { Config } from ".";
+import {AST_NODE, AST_TREE, EXPRESSION} from './types';
+import {Config} from '.';
 
-export function printTree(tree: AST_TREE, interfaceName = "View") {
-  let ret = "";
+export function printTree(tree: AST_TREE, interfaceName = 'View') {
+  let ret = '';
 
   ret += `export interface ${interfaceName} {\n`;
 
@@ -218,7 +218,7 @@ export function printTree(tree: AST_TREE, interfaceName = "View") {
     ret += `${expression.expression}: ${printExpressionType(expression)};\n`;
   }
 
-  ret += "};";
+  ret += '};';
 
   return ret;
 }
@@ -226,28 +226,28 @@ export function printTree(tree: AST_TREE, interfaceName = "View") {
 export function printUse(
   tree: AST_TREE,
   realType: string,
-  config: Config={},
+  config: Config = {}
 ) {
   const ret = [
     `class ${realType}UseChecker extends ${realType} {\n`,
-    "  __useCheckerTestFunc() {\n",
+    '  __useCheckerTestFunc() {\n',
   ];
   for (const expressionKey of Object.keys(tree)) {
     const node = tree[expressionKey];
     let expressionUses;
     if (config.undefinedCheck) {
-      expressionUses = getNodeUses(node, "undefined");
+      expressionUses = getNodeUses(node, 'undefined');
     } else {
-      expressionUses = getNodeUses(node, "null!");
+      expressionUses = getNodeUses(node, 'null!');
     }
     for (const use of expressionUses) {
       if (config.typeCheckPropertyBindings && use.propertyName && use.tagName) {
         const varName = `${kebabCaseToCamelCase(use.tagName)}Elem`;
         ret.push(
-          `    {\n` +
-          `      const ${varName}: ElementTagNameMap['${use.tagName}'] = null!;\n` +
-          `      ${varName}.${use.propertyName} = this.${use.expression};\n` +
-          `    }\n`
+          '    {\n' +
+            `      const ${varName}: ElementTagNameMap['${use.tagName}'] = null!;\n` +
+            `      ${varName}.${use.propertyName} = this.${use.expression};\n` +
+            '    }\n'
         );
       }
       if (use.type === undefined) {
@@ -258,26 +258,30 @@ export function printUse(
     }
   }
 
-  ret.push("  }\n", "}\n");
-  return ret.join("");
+  ret.push('  }\n', '}\n');
+  return ret.join('');
 }
 
 type NodeUse = {
-  expression: string,
-  type: string|undefined,
-  tagName?: string,
-  propertyName?: string,
+  expression: string;
+  type: string | undefined;
+  tagName?: string;
+  propertyName?: string;
 };
 
-function *getNodeUses(
-    node: AST_NODE, argValue: string):IterableIterator<NodeUse> {
+function* getNodeUses(
+  node: AST_NODE,
+  argValue: string
+): IterableIterator<NodeUse> {
   switch (node.type) {
     case EXPRESSION.LIST: {
-      yield {expression: `${node.expression}!`, type: `Array<any>`};
+      yield {expression: `${node.expression}!`, type: 'Array<any>'};
       if (node.children) {
         for (const childNodeExpression of Object.keys(node.children)) {
-          const innerUses =
-              getNodeUses(node.children[childNodeExpression], argValue);
+          const innerUses = getNodeUses(
+            node.children[childNodeExpression],
+            argValue
+          );
           for (const innerUse of innerUses) {
             yield {
               expression: `${node.expression}!.${innerUse.expression}`,
@@ -288,13 +292,15 @@ function *getNodeUses(
       }
       if (node.listIndexType) {
         for (const listNodeExpression of Object.keys(node.listIndexType)) {
-          const innerUses =
-              getNodeUses(node.listIndexType[listNodeExpression], argValue);
+          const innerUses = getNodeUses(
+            node.listIndexType[listNodeExpression],
+            argValue
+          );
           for (const innerUse of innerUses) {
             yield {
               expression: `${node.expression}![0]!.${innerUse.expression}`,
               type: innerUse.type,
-            }
+            };
           }
         }
       }
@@ -305,8 +311,10 @@ function *getNodeUses(
       yield {expression: `${node.expression}`, type: undefined};
       if (node.children) {
         for (const childNodeExpression of Object.keys(node.children)) {
-          const childUses =
-              getNodeUses(node.children[childNodeExpression], argValue);
+          const childUses = getNodeUses(
+            node.children[childNodeExpression],
+            argValue
+          );
           for (const childUse of childUses) {
             yield {
               expression: `${node.expression}!.${childUse.expression}`,
@@ -326,7 +334,7 @@ function *getNodeUses(
         }
       }
       yield {
-        expression: `${node.expression}!(${argList.join(", ")})`,
+        expression: `${node.expression}!(${argList.join(', ')})`,
         type: undefined,
       };
 
@@ -342,8 +350,7 @@ function *getNodeUses(
           expression: exprs[exprs.length - 1].expression,
           type: undefined,
           tagName: node.tagName,
-          propertyName:
-            kebabCaseToCamelCase(node.propertyName)
+          propertyName: kebabCaseToCamelCase(node.propertyName),
         };
       }
       break;
@@ -353,15 +360,15 @@ function *getNodeUses(
 
 function printChildrenType(children: AST_TREE, arrayType?: string): string {
   const childType =
-    "null|undefined|{" +
+    'null|undefined|{' +
     Object.keys(children)
       .map(childKey => children[childKey])
       .map(childNode => {
         return `${childNode.expression}: ${printExpressionType(childNode)};`;
       })
       .filter(v => v.length)
-      .join(" ") +
-    "}";
+      .join(' ') +
+    '}';
 
   if (arrayType) {
     return `${arrayType} & ${childType}`;
@@ -373,32 +380,32 @@ function printChildrenType(children: AST_TREE, arrayType?: string): string {
 function expressionToString(expression: EXPRESSION = EXPRESSION.VALUE) {
   switch (expression) {
     case EXPRESSION.LIST:
-      return "null|undefined|ArrayLike<any|null|undefined>";
+      return 'null|undefined|ArrayLike<any|null|undefined>';
     case EXPRESSION.VALUE:
-      return "any|null|undefined";
+      return 'any|null|undefined';
     case EXPRESSION.FUNCTION:
-      return "(() => any|null|undefined)|null|undefined";
+      return '(() => any|null|undefined)|null|undefined';
   }
 
-  return "any|null|undefined";
+  return 'any|null|undefined';
 }
 
 function argumentCountToArgs(count: number) {
   return new Array(count)
-    .fill("")
+    .fill('')
     .map((_, i) => {
       return `arg${i}: any|null|undefined`;
     })
-    .join(", ");
+    .join(', ');
 }
 
 function printListIndexType(node: AST_NODE): string {
   if (
     treeHasNodes(node.listIndexType) &&
-    node.listIndexType!["[]"] !== undefined
+    node.listIndexType!['[]'] !== undefined
   ) {
     return `null|undefined|ArrayLike<${printExpressionType(
-      node.listIndexType!["[]"]
+      node.listIndexType!['[]']
     )}>`;
   }
   if (treeHasNodes(node.listIndexType)) {
@@ -406,10 +413,10 @@ function printListIndexType(node: AST_NODE): string {
       node.listIndexType!
     )}|null|undefined>`;
   } else if (node.type === EXPRESSION.LIST) {
-    return `null|undefined|ArrayLike<any|null|undefined>`;
+    return 'null|undefined|ArrayLike<any|null|undefined>';
   }
 
-  return "";
+  return '';
 }
 
 function printFunctionExpression(node: AST_NODE) {
@@ -435,21 +442,21 @@ function printExpressionType(node: AST_NODE) {
   if (node.type === EXPRESSION.VALUE) {
     return treeHasNodes(node.children)
       ? printChildrenType(node.children!, printListIndexType(node))
-      : "any|null|undefined";
+      : 'any|null|undefined';
   }
 
   if (node.type === EXPRESSION.LIST) {
     if (treeHasNodes(node.listIndexType) || treeHasNodes(node.children)) {
       return printChildrenType(node.children || {}, printListIndexType(node));
     }
-    return "null|undefined|ArrayLike<any|null|undefined>";
+    return 'null|undefined|ArrayLike<any|null|undefined>';
   }
 
   if (node.type === EXPRESSION.FUNCTION) {
     return printFunctionExpression(node);
   }
 
-  return "any|null|undefined";
+  return 'any|null|undefined';
 }
 
 function kebabCaseToCamelCase(kebab: string): string {

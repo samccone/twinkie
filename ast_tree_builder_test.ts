@@ -204,12 +204,12 @@
  *    limitations under the License.
  */
 
-import { expect } from "chai";
-import { nodesToTree } from "./ast_tree_builder";
-import { walkNodes } from "./dom_walker";
-import * as Cheerio from "cheerio";
-import { AliasMap, AST_NODE, EXPRESSION } from "./types";
-import { getExpressionsForNode } from "./ast_builder";
+import {expect} from 'chai';
+import {nodesToTree} from './ast_tree_builder';
+import {walkNodes} from './dom_walker';
+import * as Cheerio from 'cheerio';
+import {AliasMap, AST_NODE, EXPRESSION} from './types';
+import {getExpressionsForNode} from './ast_builder';
 
 function stringToNodes(html: string) {
   const parsed = Cheerio.parseHTML(html);
@@ -225,29 +225,29 @@ function stringToNodes(html: string) {
   return nodes;
 }
 
-describe("ast tree building", () => {
+describe('ast tree building', () => {
   // nested dom-repeat case would be nice to add here
 
-  it("ignores style tags", () => {
-    const nodes = stringToNodes(`<style>[[wow]]</style>`);
+  it('ignores style tags', () => {
+    const nodes = stringToNodes('<style>[[wow]]</style>');
 
     expect(nodesToTree(nodes)).to.deep.equal({});
   });
 
-  it("ignores script tags", () => {
-    const nodes = stringToNodes(`<script>[[wow]]</script>`);
+  it('ignores script tags', () => {
+    const nodes = stringToNodes('<script>[[wow]]</script>');
 
     expect(nodesToTree(nodes)).to.deep.equal({});
   });
 
-  it("handles a dom-repeat as function with child", () => {
+  it('handles a dom-repeat as function with child', () => {
     const nodes = stringToNodes(
-      `<template is="dom-repeat" items="[[wow()]]">[[item.zap]]</template>`
+      '<template is="dom-repeat" items="[[wow()]]">[[item.zap]]</template>'
     );
 
     expect(nodesToTree(nodes)).to.deep.equal({
       wow: {
-        expression: "wow",
+        expression: 'wow',
         type: EXPRESSION.FUNCTION,
         returnType: EXPRESSION.LIST,
         argumentCount: 0,
@@ -255,21 +255,21 @@ describe("ast tree building", () => {
         listIndexType: {
           zap: {
             children: {},
-            expression: "zap",
-            type: EXPRESSION.VALUE
-          }
-        }
-      }
+            expression: 'zap',
+            type: EXPRESSION.VALUE,
+          },
+        },
+      },
     });
   });
-  it("handles a iron-list as function with child", () => {
+  it('handles a iron-list as function with child', () => {
     const nodes = stringToNodes(
-      `<iron-list items="[[wow()]]">[[item.zap]]</iron-list>`
+      '<iron-list items="[[wow()]]">[[item.zap]]</iron-list>'
     );
 
     expect(nodesToTree(nodes)).to.deep.equal({
       wow: {
-        expression: "wow",
+        expression: 'wow',
         type: EXPRESSION.FUNCTION,
         returnType: EXPRESSION.LIST,
         argumentCount: 0,
@@ -277,15 +277,15 @@ describe("ast tree building", () => {
         listIndexType: {
           zap: {
             children: {},
-            expression: "zap",
-            type: EXPRESSION.VALUE
-          }
-        }
-      }
+            expression: 'zap',
+            type: EXPRESSION.VALUE,
+          },
+        },
+      },
     });
   });
 
-  it("handles dom-repeat nodes", () => {
+  it('handles dom-repeat nodes', () => {
     const nodes = stringToNodes(`
         <dom-module id="nest">
             <template>
@@ -302,22 +302,22 @@ describe("ast tree building", () => {
         children: {
           name: {
             children: {},
-            expression: "name",
-            type: EXPRESSION.VALUE
+            expression: 'name',
+            type: EXPRESSION.VALUE,
           },
           cows: {
             children: {},
-            expression: "cows",
-            type: EXPRESSION.LIST
-          }
+            expression: 'cows',
+            type: EXPRESSION.LIST,
+          },
         },
-        expression: "foo",
-        type: EXPRESSION.LIST
-      }
+        expression: 'foo',
+        type: EXPRESSION.LIST,
+      },
     });
   });
 
-  it("handles nested nodes", () => {
+  it('handles nested nodes', () => {
     const nodes = stringToNodes(`
         <dom-module id="nest">
             <template>
@@ -329,18 +329,18 @@ describe("ast tree building", () => {
 
     expect(nodesToTree(nodes)).to.deep.eq({
       a: {
-        expression: "a",
+        expression: 'a',
         children: {},
-        type: EXPRESSION.VALUE
+        type: EXPRESSION.VALUE,
       },
       b: {
-        expression: "b",
+        expression: 'b',
         type: EXPRESSION.VALUE,
         children: {
           z: {
             children: {},
-            expression: "z",
-            type: EXPRESSION.VALUE
+            expression: 'z',
+            type: EXPRESSION.VALUE,
           },
           a: {
             children: {
@@ -348,26 +348,26 @@ describe("ast tree building", () => {
                 children: {
                   t: {
                     children: {},
-                    expression: "t",
-                    type: EXPRESSION.VALUE
-                  }
+                    expression: 't',
+                    type: EXPRESSION.VALUE,
+                  },
                 },
-                expression: "c",
+                expression: 'c',
                 type: EXPRESSION.FUNCTION,
                 argumentCount: 2,
-                returnType: EXPRESSION.VALUE
-              }
+                returnType: EXPRESSION.VALUE,
+              },
             },
-            expression: "a",
-            type: EXPRESSION.VALUE
-          }
-        }
+            expression: 'a',
+            type: EXPRESSION.VALUE,
+          },
+        },
       },
       z: {
-        expression: "z",
+        expression: 'z',
         children: {},
-        type: EXPRESSION.VALUE
-      }
+        type: EXPRESSION.VALUE,
+      },
     });
   });
 });
