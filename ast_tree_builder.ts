@@ -300,7 +300,7 @@ function addListIndexType(tree: AST_TREE, node: AST_NODE) {
     LIST_INDEX_TYPE_MATCHER_REGEX
   );
 
-  if (rootExpressionMatcher == null) {
+  if (!rootExpressionMatcher) {
     throw new Error(
       `Unable to extract root expression from ${JSON.stringify(node)}`
     );

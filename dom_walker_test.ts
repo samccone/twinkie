@@ -238,7 +238,7 @@ describe("extracting contents", () => {
           accum.push(extractNodeContents(node));
           return accum;
         }, [])
-        .filter((v: null | string) => v != null)
+        .filter((v: null | string) => !!v)
     ).to.deep.equal([]);
   });
 

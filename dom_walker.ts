@@ -226,7 +226,7 @@ export function extractNodeAttributes(node: CheerioElement): AttributeExpression
 }
 
 export function extractNodeContents(node: CheerioElement) {
-  if (node.type !== "comment" && node.nodeValue != null) {
+  if (node.type !== "comment" && node.nodeValue) {
     return node.nodeValue;
   }
 
@@ -238,7 +238,7 @@ export function walkNodes(
   aliasMap: AliasMap,
   fn: (node: CheerioElement, aliasMap: AliasMap) => void
 ) {
-  if (node == null) {
+  if (!node) {
     return;
   }
 
