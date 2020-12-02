@@ -204,7 +204,7 @@
  *    limitations under the License.
  */
 
-import { AST_NODE, AST_TREE, EXPRESSION, MAIN_AST_NODE_TYPE } from "./types";
+import {AST_NODE, AST_TREE, EXPRESSION, MAIN_AST_NODE_TYPE} from './types';
 
 const LIST_INDEX_TYPE_MATCHER_REGEX = /(.*)\[\]$/;
 
@@ -269,12 +269,12 @@ function addSubArrayToListNode(
     if (nodeRef === undefined) {
       nodeRef = tree[rootKey];
     } else {
-      nodeRef = nodeRef.listIndexType!["[]"];
+      nodeRef = nodeRef.listIndexType!['[]'];
     }
   }
 
   if (nodeRef && Object.keys(nodeRef.listIndexType || {}).length) {
-    if (!nodeRef.listIndexType!["[]"]) {
+    if (!nodeRef.listIndexType!['[]']) {
       throw new Error(
         `${rootExpression} expression already has a list index type and can not also have an array index type Please file a bug!`
       );
@@ -282,16 +282,16 @@ function addSubArrayToListNode(
   }
 
   nodeRef!.listIndexType = {
-    "[]": {
-      expression: "[]",
+    '[]': {
+      expression: '[]',
       type: EXPRESSION.LIST,
-      listIndexType: {}
-    }
+      listIndexType: {},
+    },
   };
 
   for (const childKey of Object.keys(node.children || {})) {
     const child = node.children![childKey];
-    mergeNodeIntoTree(nodeRef!.listIndexType!["[]"].listIndexType!, child);
+    mergeNodeIntoTree(nodeRef!.listIndexType!['[]'].listIndexType!, child);
   }
 }
 
@@ -317,7 +317,7 @@ function addListIndexType(tree: AST_TREE, node: AST_NODE) {
     tree[rootExpression] = {
       expression: rootExpression,
       type: EXPRESSION.LIST,
-      listIndexType: {}
+      listIndexType: {},
     };
   }
 

@@ -204,13 +204,13 @@
  *    limitations under the License.
  */
 
-import * as fs from "fs";
-import * as Cheerio from "cheerio";
-import { walkNodes } from "./dom_walker";
-import { AliasMap, AST_NODE } from "./types";
-import { getExpressionsForNode } from "./ast_builder";
-import { nodesToTree } from "./ast_tree_builder";
-import { printTree, printUse } from "./printer";
+import * as fs from 'fs';
+import * as Cheerio from 'cheerio';
+import {walkNodes} from './dom_walker';
+import {AliasMap, AST_NODE} from './types';
+import {getExpressionsForNode} from './ast_builder';
+import {nodesToTree} from './ast_tree_builder';
+import {printTree, printUse} from './printer';
 
 export interface Config {
   undefinedCheck?: boolean;
@@ -219,7 +219,7 @@ export interface Config {
 
 function getTree(htmlPath: string) {
   const nodes: AST_NODE[] = [];
-  const sample = fs.readFileSync(htmlPath, "utf-8");
+  const sample = fs.readFileSync(htmlPath, 'utf-8');
   const parsed = Cheerio.parseHTML(sample);
   const aliasMap: AliasMap = {};
 
@@ -234,19 +234,15 @@ function getTree(htmlPath: string) {
 
 export function generateInterface(
   htmlPath: string,
-  interfaceName: string = "TemplateInterface"
+  interfaceName = 'TemplateInterface'
 ) {
   return printTree(nodesToTree(getTree(htmlPath)), interfaceName);
 }
 
 export function generateFauxUse(
   htmlPath: string,
-  interfaceName: string = "TemplateInterface",
-  config: Config,
+  interfaceName = 'TemplateInterface',
+  config: Config
 ) {
-  return printUse(
-    nodesToTree(getTree(htmlPath)),
-    interfaceName,
-    config
-  );
+  return printUse(nodesToTree(getTree(htmlPath)), interfaceName, config);
 }

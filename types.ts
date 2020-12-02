@@ -212,7 +212,7 @@ export enum EXPRESSION {
   VALUE,
   FUNCTION,
   LIST,
-  PROPERTY_ASSIGNMENT
+  PROPERTY_ASSIGNMENT,
 }
 
 export type BASE_AST_NODE = {
@@ -223,10 +223,12 @@ export type BASE_AST_NODE = {
   listIndexType?: AST_TREE;
 };
 export type MAIN_AST_NODE_TYPE =
-    EXPRESSION.VALUE | EXPRESSION.FUNCTION | EXPRESSION.LIST;
+  | EXPRESSION.VALUE
+  | EXPRESSION.FUNCTION
+  | EXPRESSION.LIST;
 export type MAIN_AST_NODE = BASE_AST_NODE & {
   type: MAIN_AST_NODE_TYPE;
-}
+};
 
 // An AST node representing an assignment to a property on another element,
 // So for:
@@ -235,12 +237,12 @@ export type MAIN_AST_NODE = BASE_AST_NODE & {
 //    tagName: 'foo-bar',
 //    propertyName: 'fizz-baz',
 //    rightHandSide: (AST_NODE for {{qux}}),
-export type PROPERTY_ASSIGNMENT_AST_NODE = BASE_AST_NODE &  {
+export type PROPERTY_ASSIGNMENT_AST_NODE = BASE_AST_NODE & {
   type: EXPRESSION.PROPERTY_ASSIGNMENT;
   tagName: string;
   propertyName: string;
   rightHandSide: AST_NODE;
-}
+};
 
 export type AST_NODE = MAIN_AST_NODE | PROPERTY_ASSIGNMENT_AST_NODE;
 

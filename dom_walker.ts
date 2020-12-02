@@ -204,21 +204,23 @@
  *    limitations under the License.
  */
 
-import { AliasMap } from "./types";
-import { isDomRepeat, isExpressionFunction, getFunctionName } from "./utils";
-import { extractExpression } from "./expression_extractor";
-const BLACKLISTED_TAGS = new Set(["style", "script"]);
+import {AliasMap} from './types';
+import {isDomRepeat, isExpressionFunction, getFunctionName} from './utils';
+import {extractExpression} from './expression_extractor';
+const BLACKLISTED_TAGS = new Set(['style', 'script']);
 
 export interface AttributeExpression {
   attributeKey: string;
   attributeValue: string;
 }
-export function extractNodeAttributes(node: CheerioElement): AttributeExpression[] {
+export function extractNodeAttributes(
+  node: CheerioElement
+): AttributeExpression[] {
   const ret = [];
   for (const attrKey of Object.keys(node.attribs || {})) {
     ret.push({
       attributeKey: attrKey,
-      attributeValue: node.attribs[attrKey]
+      attributeValue: node.attribs[attrKey],
     });
   }
 
@@ -226,7 +228,7 @@ export function extractNodeAttributes(node: CheerioElement): AttributeExpression
 }
 
 export function extractNodeContents(node: CheerioElement) {
-  if (node.type !== "comment" && node.nodeValue) {
+  if (node.type !== 'comment' && node.nodeValue) {
     return node.nodeValue;
   }
 
@@ -249,10 +251,10 @@ export function walkNodes(
   let indexAsAliasName: string | undefined = undefined;
 
   if (isDomRepeatNode) {
-    const asExpression = extractExpression(node.attribs["items"], aliasMap)[0];
+    const asExpression = extractExpression(node.attribs['items'], aliasMap)[0];
 
-    itemAliasName = node.attribs["as"] || "item";
-    indexAsAliasName = node.attribs["index-as"] || "index";
+    itemAliasName = node.attribs['as'] || 'item';
+    indexAsAliasName = node.attribs['index-as'] || 'index';
 
     if (isExpressionFunction(asExpression)) {
       aliasMap[itemAliasName] = `${getFunctionName(asExpression)}[]`;
@@ -260,7 +262,7 @@ export function walkNodes(
       aliasMap[itemAliasName] = `${asExpression}[]`;
     }
 
-    aliasMap[indexAsAliasName] = "index";
+    aliasMap[indexAsAliasName] = 'index';
   }
 
   if (!BLACKLISTED_TAGS.has(node.type)) {

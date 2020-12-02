@@ -213,12 +213,12 @@ const IS_BOOL_PRMITIVE_REGEX = /^true$|^false$/;
 const NATIVE_BINDING_REGEX = /^(.*)::.*$/;
 const ARRAY_INDEX_ACCESS = /.*\[\]\.length$/;
 
-import { AliasMap } from "./types";
-import { isExpressionFunction, replaceFunctionArguments } from "./utils";
+import {AliasMap} from './types';
+import {isExpressionFunction, replaceFunctionArguments} from './utils';
 
 function unAliasExpressions(expressions: string[], aliasMap: AliasMap) {
   return expressions.map(expression => {
-    const leftExpression = expression.split(".")[0];
+    const leftExpression = expression.split('.')[0];
 
     if (aliasMap[leftExpression] !== undefined) {
       expression = expression.replace(leftExpression, aliasMap[leftExpression]);
@@ -250,7 +250,7 @@ export function removePrimitiveExpressions(expressions: string[]) {
 
 export function stripNegationPrefixes(expressions: string[]) {
   return expressions.map(v => {
-    if (v.startsWith("!")) {
+    if (v.startsWith('!')) {
       return v.slice(1);
     }
 
@@ -337,10 +337,10 @@ export function extractExpression(str: string, aliasMap: AliasMap) {
         // If we have an alias in place, that means we are in a dom-repeat
         // we need to replace the arg with a primitive.
         if (Object.keys(aliasMap).length) {
-          ret = ret.map(v => (v === "index" ? '"fake_index"' : v));
+          ret = ret.map(v => (v === 'index' ? '"fake_index"' : v));
         }
 
-        return ret.join("");
+        return ret.join('');
       });
     }
 
@@ -350,7 +350,7 @@ export function extractExpression(str: string, aliasMap: AliasMap) {
   // If we have an alias in place, that means we are in a dom-repeat
   // we need to filter out the index expression.
   if (Object.keys(aliasMap).length) {
-    ret = ret.filter(v => v !== "index");
+    ret = ret.filter(v => v !== 'index');
   }
 
   // Filter out calls like a[].length and a[][].length

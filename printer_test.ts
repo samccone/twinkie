@@ -204,13 +204,13 @@
  *    limitations under the License.
  */
 
-import { expect } from "chai";
-import { nodesToTree } from "./ast_tree_builder";
-import { walkNodes } from "./dom_walker";
-import * as Cheerio from "cheerio";
-import { AliasMap, AST_NODE } from "./types";
-import { getExpressionsForNode } from "./ast_builder";
-import { printTree, printUse } from "./printer";
+import {expect} from 'chai';
+import {nodesToTree} from './ast_tree_builder';
+import {walkNodes} from './dom_walker';
+import * as Cheerio from 'cheerio';
+import {AliasMap, AST_NODE} from './types';
+import {getExpressionsForNode} from './ast_builder';
+import {printTree, printUse} from './printer';
 
 function astTreeFromString(str: string) {
   const parsed = Cheerio.parseHTML(str);
@@ -226,14 +226,14 @@ function astTreeFromString(str: string) {
   return nodesToTree(nodes);
 }
 
-describe("print use", () => {
-  it("handles undefined check", () => {
+describe('print use', () => {
+  it('handles undefined check', () => {
     expect(
       printUse(
         astTreeFromString(`
         <p>[[a.f(1, 2, a.b)]]</p>
     `),
-        "FooView",
+        'FooView',
         {undefinedCheck: true}
       ).trim()
     ).to.deep.equal(
@@ -249,7 +249,7 @@ class FooViewUseChecker extends FooView {
     );
   });
 
-  it("handles objects", () => {
+  it('handles objects', () => {
     expect(
       printUse(
         astTreeFromString(`
@@ -259,7 +259,7 @@ class FooViewUseChecker extends FooView {
         <p>[[a.d]]</p>
         <p>[[a.f(1, 2, a.b)]]</p>
     `),
-        "FooView"
+        'FooView'
       ).trim()
     ).to.deep.equal(
       `
@@ -278,14 +278,14 @@ class FooViewUseChecker extends FooView {
     );
   });
 
-  it("handles reading prop of list", () => {
+  it('handles reading prop of list', () => {
     expect(
       printUse(
         astTreeFromString(`
       [[a.people.length]]
       <template is="dom-repeat" items="[[a.people]]">[[item.name]]</template>
     `),
-        "FooView"
+        'FooView'
       ).trim()
     ).to.deep.equal(
       `
@@ -301,7 +301,7 @@ class FooViewUseChecker extends FooView {
     );
   });
 
-  it("handles arrays", () => {
+  it('handles arrays', () => {
     expect(
       printUse(
         astTreeFromString(`
@@ -313,7 +313,7 @@ class FooViewUseChecker extends FooView {
         </template>
       </template>
     `),
-        "FooView"
+        'FooView'
       ).trim()
     ).to.deep.equal(
       `
@@ -329,7 +329,7 @@ class FooViewUseChecker extends FooView {
     );
   });
 
-  it("handles binding to custom element properties", () => {
+  it('handles binding to custom element properties', () => {
     expect(
       printUse(
         astTreeFromString(`
@@ -339,7 +339,7 @@ class FooViewUseChecker extends FooView {
       <template is="dom-if" if="{{good}}"></template>
       <foo-bar blip="bip-{{zim}}-zop"></foo-bar>
     `),
-        "FooView",
+        'FooView',
         {typeCheckPropertyBindings: true}
       ).trim()
     ).to.deep.equal(
@@ -372,9 +372,9 @@ class FooViewUseChecker extends FooView {
 }
     `.trim()
     );
-  })
+  });
 
-  it("handles binding to custom element properties", () => {
+  it('handles binding to custom element properties', () => {
     expect(
       printUse(
         astTreeFromString(`
@@ -384,7 +384,7 @@ class FooViewUseChecker extends FooView {
       <template is="dom-if" if="{{good}}"></template>
       <foo-bar blip="bip-{{zim}}-zop"></foo-bar>
     `),
-        "FooView",
+        'FooView',
         {typeCheckPropertyBindings: false}
       ).trim()
     ).to.deep.equal(
@@ -401,11 +401,11 @@ class FooViewUseChecker extends FooView {
 }
     `.trim()
     );
-  })
+  });
 });
 
-describe("printing", () => {
-  it("handles index-as aliasing", () => {
+describe('printing', () => {
+  it('handles index-as aliasing', () => {
     expect(
       printTree(
         astTreeFromString(`
@@ -419,7 +419,7 @@ items: null|undefined|ArrayLike<any|null|undefined>;
 };`);
   });
 
-  it("handles complex aliasing and nested loops", () => {
+  it('handles complex aliasing and nested loops', () => {
     expect(
       printTree(
         astTreeFromString(`
@@ -466,7 +466,7 @@ account: any|null|undefined;
 };`);
   });
 
-  it("handles multi-level dom-repeat aliasing", () => {
+  it('handles multi-level dom-repeat aliasing', () => {
     expect(
       printTree(
         astTreeFromString(`
@@ -479,7 +479,7 @@ items: null|undefined|ArrayLike<null|undefined|ArrayLike<null|undefined|{tap: an
 };`);
   });
 
-  it("handles 3-dimensional dom-repeat aliasing", () => {
+  it('handles 3-dimensional dom-repeat aliasing', () => {
     expect(
       printTree(
         astTreeFromString(`
@@ -496,7 +496,7 @@ items: null|undefined|ArrayLike<null|undefined|ArrayLike<null|undefined|ArrayLik
 };`);
   });
 
-  it("handles a function with a -1 param", () => {
+  it('handles a function with a -1 param', () => {
     expect(
       printTree(
         astTreeFromString(`
@@ -508,7 +508,7 @@ foo: (arg0: any|null|undefined) => any|null|undefined;
 };`);
   });
 
-  it("handles dom-repeat when using index", () => {
+  it('handles dom-repeat when using index', () => {
     expect(
       printTree(
         astTreeFromString(`
@@ -522,7 +522,7 @@ zap: null|undefined|ArrayLike<any|null|undefined>;
 };`);
   });
 
-  it("handles dom-repeat when using index as function arg", () => {
+  it('handles dom-repeat when using index as function arg', () => {
     expect(
       printTree(
         astTreeFromString(`
@@ -537,7 +537,7 @@ foo: (arg0: any|null|undefined) => any|null|undefined;
 };`);
   });
 
-  it("handles dom-repeat when alias value is used as an arg", () => {
+  it('handles dom-repeat when alias value is used as an arg', () => {
     expect(
       printTree(
         astTreeFromString(`
@@ -551,7 +551,7 @@ zap: null|undefined|ArrayLike<null|undefined|{foo: any|null|undefined;}|null|und
 someCall: (arg0: any|null|undefined) => any|null|undefined;
 };`);
   });
-  it("handes dom-repeat as function with * observer", () => {
+  it('handes dom-repeat as function with * observer', () => {
     expect(
       printTree(
         astTreeFromString(`
@@ -566,7 +566,7 @@ bob: null|undefined|{tap: any|null|undefined;};
 };`);
   });
 
-  it("handles a function on-* case", () => {
+  it('handles a function on-* case', () => {
     expect(
       printTree(
         astTreeFromString(`
@@ -578,7 +578,7 @@ wow: (arg0: any|null|undefined) => any|null|undefined;
 };`);
   });
 
-  it("handles a simple case", () => {
+  it('handles a simple case', () => {
     expect(
       printTree(
         astTreeFromString(`
@@ -594,7 +594,7 @@ d: any|null|undefined;
 };`);
   });
 
-  it("handles nested case", () => {
+  it('handles nested case', () => {
     expect(
       printTree(
         astTreeFromString(`
@@ -608,7 +608,7 @@ a: null|undefined|{d: any|null|undefined; b: null|undefined|{c: any|null|undefin
 };`);
   });
 
-  it("handles function with nested props", () => {
+  it('handles function with nested props', () => {
     expect(
       printTree(
         astTreeFromString(`
@@ -620,7 +620,7 @@ a: () => null|undefined|{z: any|null|undefined;};
 };`);
   });
 
-  it("handles dom-repeat as function", () => {
+  it('handles dom-repeat as function', () => {
     expect(
       printTree(
         astTreeFromString(`
@@ -633,7 +633,7 @@ foo: () => null|undefined|ArrayLike<any|null|undefined>;
 };`);
   });
 
-  it("handles dom-repeat as function when using child attrs", () => {
+  it('handles dom-repeat as function when using child attrs', () => {
     expect(
       printTree(
         astTreeFromString(`
@@ -647,7 +647,7 @@ foo: () => null|undefined|ArrayLike<null|undefined|{ok: any|null|undefined;}|nul
 };`);
   });
 
-  it("handles dom-repeat and has child attrs", () => {
+  it('handles dom-repeat and has child attrs', () => {
     expect(
       printTree(
         astTreeFromString(`
@@ -661,7 +661,7 @@ foo: null|undefined|ArrayLike<any|null|undefined> & null|undefined|{p: any|null|
 };`);
   });
 
-  it("handles very nested dom-repeats", () => {
+  it('handles very nested dom-repeats', () => {
     expect(
       printTree(
         astTreeFromString(`
@@ -680,7 +680,7 @@ foo: null|undefined|ArrayLike<null|undefined|{tap: null|undefined|ArrayLike<null
 };`);
   });
 
-  it("handles nested dom-repeats", () => {
+  it('handles nested dom-repeats', () => {
     expect(
       printTree(
         astTreeFromString(`
@@ -697,7 +697,7 @@ foo: null|undefined|ArrayLike<null|undefined|{wow: any|null|undefined; tap: null
 };`);
   });
 
-  it("handles a dom-repeat case", () => {
+  it('handles a dom-repeat case', () => {
     expect(
       printTree(
         astTreeFromString(`
