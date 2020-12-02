@@ -220,7 +220,7 @@ import {
 } from "./utils";
 
 const FUNCTION_LIST_ACCESS_MATCHER = /(.*)\(\)\[\]$/;
-const ON_BINDING_ATTR_MATCHER = /^on\-.*$/;
+const ON_BINDING_ATTR_MATCHER = /^on-.*$/;
 
 function expressionsToAstNodes(expressions: string[]) {
   return expressions.reduce((accum: AST_NODE[], expression) => {
@@ -278,7 +278,7 @@ export function functionExpressionToAstNodes(
   const functionName = getFunctionName(expression);
   const functionArguments = getFunctionArguments(expression);
 
-  if (functionName != null) {
+  if (functionName) {
     if (functionName.indexOf(".") !== -1) {
       expressions.push(
         ...dotExpressionToNestedExpression(functionName, EXPRESSION.FUNCTION, {
@@ -433,11 +433,11 @@ export function getExpressionsForNode(
       let tagName = node.name;
       const isAttribute =
           attributeExpressions.find((ae) => ae.attributeKey === 'is');
-      if (isAttribute != null) {
+      if (isAttribute) {
         tagName = isAttribute.attributeValue;
       }
       for (const expression of expressions) {
-        if (expression == null) {
+        if (!expression) {
           continue;
         }
         astNodes.push({

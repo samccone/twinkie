@@ -216,13 +216,13 @@ export function isDomRepeat(node: CheerioElement) {
 }
 
 export function isExpressionFunction(expression: string) {
-  return expression.match(FUNCTION_MATCHER) != null;
+  return !!expression.match(FUNCTION_MATCHER);
 }
 
 export function getFunctionArguments(functionExpression: string) {
   const match = functionExpression.match(FUNCTION_MATCHER);
 
-  if (match != null && match[2].length) {
+  if (match && match[2].length) {
     return match[2].split(",").map(v => v.trim());
   }
 
@@ -242,7 +242,7 @@ export function replaceFunctionArguments(
 export function getFunctionName(functionExpression: string) {
   const match = functionExpression.match(FUNCTION_MATCHER);
 
-  if (match == null) {
+  if (!match) {
     return null;
   }
 

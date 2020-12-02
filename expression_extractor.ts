@@ -262,7 +262,7 @@ function stripNativeBindingPostfixes(expressions: string[]) {
   return expressions.map(expression => {
     const match = expression.match(NATIVE_BINDING_REGEX);
 
-    if (match != null) {
+    if (match) {
       return match[1];
     }
 
@@ -278,15 +278,15 @@ export function extractExpression(str: string, aliasMap: AliasMap) {
     return ret;
   }
 
-  while (true) {
+  for (;;) {
     const substring = str.slice(startingIndex);
     const twoWayMatch = substring.match(TWO_WAY_BINDING_REGEX);
     const oneWayMatch = substring.match(ONE_WAY_BINDING_REGEX);
 
     if (
-      oneWayMatch != null &&
+      oneWayMatch &&
       oneWayMatch.index !== undefined &&
-      twoWayMatch != null &&
+      twoWayMatch &&
       twoWayMatch.index !== undefined
     ) {
       if (oneWayMatch.index < twoWayMatch.index) {
@@ -300,13 +300,13 @@ export function extractExpression(str: string, aliasMap: AliasMap) {
       continue;
     }
 
-    if (oneWayMatch != null && oneWayMatch.index !== undefined) {
+    if (oneWayMatch && oneWayMatch.index !== undefined) {
       ret.push(oneWayMatch[1]);
       startingIndex += oneWayMatch.index + oneWayMatch[0].length;
       continue;
     }
 
-    if (twoWayMatch != null && twoWayMatch.index !== undefined) {
+    if (twoWayMatch && twoWayMatch.index !== undefined) {
       ret.push(twoWayMatch[1]);
       startingIndex += twoWayMatch.index + twoWayMatch[0].length;
       continue;
@@ -354,6 +354,6 @@ export function extractExpression(str: string, aliasMap: AliasMap) {
   }
 
   // Filter out calls like a[].length and a[][].length
-  ret = ret.filter(v => v.match(ARRAY_INDEX_ACCESS) == null);
+  ret = ret.filter(v => !v.match(ARRAY_INDEX_ACCESS));
   return ret;
 }
