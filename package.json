@@ -3,8 +3,8 @@
     "cheerio": "^1.0.0-rc.2"
   },
   "scripts": {
-    "test": "mocha -r ts-node/register *_test.ts",
-    "test-watch": "mocha -r ts-node/register --watch --watch-files ./, *_test.ts",
+    "test": "mocha -r ts-node/register src/**/*_test.ts",
+    "test-watch": "mocha -r ts-node/register --watch --watch-files ./, src/**/*_test.ts",
     "build": "tsc",
     "format": "gts fix",
     "format-lint": "gts lint"
@@ -21,9 +21,19 @@
   },
   "name": "twinkie",
   "description": "Automatic template interfaces from polymer template files",
-  "version": "1.0.0",
-  "main": "index.js",
+  "version": "1.0.1",
+  "main": "src/index.js",
   "bin": "bin.js",
+  "files": [
+    "src/**/*.js",
+    "src/**/*.ts",
+    "bin.js",
+    "package.json",
+    "tsconfig.json",
+    "LICENSE",
+    "README.md"
+
+  ],
   "directories": {
     "test": "test"
   },
