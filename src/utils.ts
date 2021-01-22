@@ -203,6 +203,11 @@
  *    See the License for the specific language governing permissions and
  *    limitations under the License.
  */
+import {
+  ExpressionPart,
+  isRawExpression,
+  RawExpression,
+} from './expression_extractor';
 
 const FUNCTION_MATCHER = /^(.*?)\((.*)\)$/;
 
@@ -247,4 +252,30 @@ export function getFunctionName(functionExpression: string) {
   }
 
   return match[1];
+}
+
+export enum CheerioElementType {
+  Script = 'script',
+  Style = 'style',
+  Text = 'text',
+  Comment = 'comment',
+  Tag = 'tag',
+}
+
+export function isExpressionWithTheOnlyBinding(
+  parts: ExpressionPart[]
+): parts is [RawExpression] {
+  return parts.length === 1 && isRawExpression(parts[0]);
+}
+
+export function isTextOnlyExpression(
+  parts: ExpressionPart[]
+): parts is [string] | [] {
+  return (
+    parts.length === 0 || (parts.length === 1 && !isRawExpression(parts[0]))
+  );
+}
+
+export function assertNever(val: never): never {
+  throw new Error(`The value '${val}' is not expected`);
 }
