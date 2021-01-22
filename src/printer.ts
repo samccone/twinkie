@@ -459,6 +459,6 @@ function printExpressionType(node: AST_NODE) {
   return 'any|null|undefined';
 }
 
-function kebabCaseToCamelCase(kebab: string): string {
+export function kebabCaseToCamelCase(kebab: string): string {
   return kebab.replace(/-(.)/g, (_, c) => c.toUpperCase());
 }
