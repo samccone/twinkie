@@ -407,7 +407,9 @@ function getTemplateFromExpression(expr: Expression) {
   if (!isTaggedTemplateExpression(expr)) {
     throw new Error('Internal error');
   }
-  if (!isIdentifier(expr.tag) || expr.tag.text !== 'html') {
+  // We don't compare `expr.tag.text` with `html`, because we want to allow
+  // importing `html` as something else, e.g. as `polymerHtml`.
+  if (!isIdentifier(expr.tag) || !expr.tag.text.endsWith('tml')) {
     throw new Error('Internal error');
   }
   if (!isNoSubstitutionTemplateLiteral(expr.template)) {
