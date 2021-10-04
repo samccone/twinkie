@@ -214,8 +214,8 @@ import {SourceFile} from 'typescript';
 const specialDomRepatAttributes = new Set([
   'items',
   'as',
-  'indexAs',
-  'itemIndexAs',
+  'index-as',
+  'item-index-as',
   'sort',
   'filter',
   'observe',
@@ -255,14 +255,14 @@ export class DomRepeatElementTranspiler extends OrdinaryTagTranspiler {
     const items = element.attribs['items'];
 
     assertAttributeValueIsValidIdentifier(file, element, 'as');
-    assertAttributeValueIsValidIdentifier(file, element, 'indexAs');
-    assertAttributeValueIsValidIdentifier(file, element, 'itemsIndexAs');
+    assertAttributeValueIsValidIdentifier(file, element, 'index-as');
+    assertAttributeValueIsValidIdentifier(file, element, 'items-index-as');
     assertAttributeValueIsValidIdentifier(file, element, 'sort');
     assertAttributeValueIsValidIdentifier(file, element, 'filter');
 
     const as = element.attribs['as'] ?? 'item';
-    const indexAs = element.attribs['indexAs'] ?? 'index';
-    const itemsIndexAs = element.attribs['itemsIndexAs'] ?? 'itemsIndexAs';
+    const indexAs = element.attribs['index-as'] ?? 'index';
+    const itemsIndexAs = element.attribs['items-index-as'] ?? 'itemsIndexAs';
     const sortFunction = element.attribs['sort'];
     const filter = element.attribs['filter'];
     const observe = element.attribs['observe'];
